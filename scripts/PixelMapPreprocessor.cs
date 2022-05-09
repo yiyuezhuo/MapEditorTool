@@ -39,7 +39,7 @@ static class PixelMapPreprocessor
         }
     }
 
-    static Result Process(byte[] data)
+    public static Result Process(byte[] data)
     {
         // var stopWatch = new System.Diagnostics.Stopwatch();
         // stopWatch.Restart();

@@ -1,6 +1,6 @@
 extends Node
 
-signal read_completed
+signal read_completed(imageData, imageType)
 signal load_completed(image)
 
 var js_callback = JavaScript.create_callback(self, "load_handler");
@@ -40,18 +40,22 @@ func _define_js()->void:
 	""", true)
 
 func load_handler(_args):
-	emit_signal("read_completed")
+	var imageType = js_interface.fileType;
+	var imageData = JavaScript.eval("_HTML5FileExchange.result", true) # interface doesn't work as expected for some reason
+	emit_signal("read_completed", imageData, imageType)
+
+func read_data():
+	js_interface.upload(js_callback)
 	
 func load_image():
 	if OS.get_name() != "HTML5" or !OS.has_feature('JavaScript'):
 		return
 
-	js_interface.upload(js_callback);
+		read_data()
 
-	yield(self, "read_completed")
-	
-	var imageType = js_interface.fileType;
-	var imageData = JavaScript.eval("_HTML5FileExchange.result", true) # interface doesn't work as expected for some reason
+	var imageDataType = yield(self, "read_completed")
+	var imageData = imageDataType[0]
+	var imageType = imageDataType[1]
 	
 	var image = Image.new()
 	var image_error
