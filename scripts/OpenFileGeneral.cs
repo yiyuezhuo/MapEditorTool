@@ -29,7 +29,7 @@ public class OpenFileGeneral : Button
         fileDialog.Connect("file_selected", this, nameof(OnFileDialogFileSelected));
     }
 
-    bool IsHTML5() => OS.GetName() == "HTML5" && OS.HasFeature("JavaScript");
+    public bool IsHTML5() => OS.GetName() == "HTML5" && OS.HasFeature("JavaScript");
 
     async Task<ImageData> GetImageData()
     {
@@ -49,33 +49,6 @@ public class OpenFileGeneral : Button
         return imageData; // type = "jpg", "png", ...
     }
 
-    public static Image Decode(ImageData imageData)
-    {
-        var image = new Image();
-        Error imageError;
-
-        switch(imageData.type)
-        {
-            case "png":
-            case "PNG":
-                imageError = image.LoadPngFromBuffer(imageData.data);
-                break;
-            case "jpg":
-            case "jpeg":
-            case "JPG":
-            case "JPEG":
-                imageError = image.LoadJpgFromBuffer(imageData.data);
-                break;
-            case "webp":
-            case "WEBP":
-                imageError = image.LoadWebpFromBuffer(imageData.data);
-                break;
-        }
-
-        // TODO: handle imageError
-        return image;
-    }
-
     void OnPressed()
     {
         var _ = OnPressedAsync(); // suppress a warning and an error of "Attempted to convert an unmarshallable managed type to Variant. Name: 'Task`1' Encoding: 21."
@@ -93,7 +66,8 @@ public class OpenFileGeneral : Button
         if(!load)
             return;
 
-        var image = Decode(imageData);
+        // var image = Decode(imageData);
+        var image = ImageGodotBackend.Decode(imageData.data, imageData.type);
 
         loadCompleted?.Invoke(this, image);
     }

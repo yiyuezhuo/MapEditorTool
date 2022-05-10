@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 
 public class ConsoleUI : VBoxContainer
 {
+    OpenFileGeneral openFileGeneral;
+
     TextureRect previewRect;
     TextureRect remapRect;
     TextEdit jsonOutput;
@@ -15,7 +17,7 @@ public class ConsoleUI : VBoxContainer
     public override void _Ready()
     {
         var premadeMapOptions = (OptionButton)GetNode("ToolContainer/PremadeMapOptions");
-        var openFileGeneral = (OpenFileGeneral)GetNode("ToolContainer/OpenFileGeneral");
+        openFileGeneral = (OpenFileGeneral)GetNode("ToolContainer/OpenFileGeneral");
         var processButton = (Button)GetNode("ToolContainer/ProcessButton");
 
         previewRect = (TextureRect)GetNode("PreviewRect");
@@ -59,7 +61,8 @@ public class ConsoleUI : VBoxContainer
 
     void DoSelect(ImageData imageData)
     {
-        var image = OpenFileGeneral.Decode(imageData);
+        // var image = OpenFileGeneral.Decode(imageData);
+        var image = ImageGodotBackend.Decode(imageData.data, imageData.type);
         var tex = new ImageTexture();
         tex.CreateFromImage(image, 0);
         
@@ -72,22 +75,30 @@ public class ConsoleUI : VBoxContainer
 
     async Task DoProcessAsync(ImageData imageData)
     {
-        Message("Processing...");
+        var message = "Processing...";
+        if(openFileGeneral.IsHTML5())
+            message += "  (Warning: HTML5 version is 5x slower than native in the processing)";
+
+        Message(message);
+
         await ToSignal(GetTree(), "idle_frame"); // Wait for UI to refresh
         await ToSignal(GetTree(), "idle_frame"); // For some reason I need to wait 2 frames?
 
         var stopWatch = new System.Diagnostics.Stopwatch();
         stopWatch.Restart();
 
-        DoProcessReal(imageData);
+        DoProcessCore(imageData);
 
         stopWatch.Stop();
         Message($"Processing Finished. Elasped: {stopWatch.Elapsed}");
     }
 
-    void DoProcessReal(ImageData imageData)
+    void DoProcessCore(ImageData imageData)
     {
-        var result = PixelMapPreprocessor.Process(imageData.data);
+        // var backend = new ImageSharpBackend(); // trait?
+        var backend = new ImageGodotBackend(); // trait?
+        var result = backend.Process(imageData.data, imageData.type);
+
         var image = new Image();
         image.LoadPngFromBuffer(result.data);
         var tex = new ImageTexture();
