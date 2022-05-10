@@ -1,9 +1,62 @@
-[gd_scene format=2]
+[gd_scene load_steps=3 format=2]
 
-[node name="Control" type="Control"]
+[ext_resource path="res://scenes/OpenFileGeneral.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scripts/ConsoleUI.cs" type="Script" id=2]
+
+[node name="ConsoleUI" type="VBoxContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 2 )
 
-[node name="Button" type="Button" parent="."]
-margin_right = 12.0
+[node name="ToolContainer" type="HBoxContainer" parent="."]
+margin_right = 1024.0
 margin_bottom = 20.0
+
+[node name="PremadeMapOptions" type="OptionButton" parent="ToolContainer"]
+margin_right = 71.0
+margin_bottom = 20.0
+text = "France"
+items = [ "France", null, false, 0, null, "Japan", null, false, 1, null, "Tokyo", null, false, 2, null ]
+selected = 0
+
+[node name="OpenFileGeneral" parent="ToolContainer" instance=ExtResource( 1 )]
+margin_left = 75.0
+margin_right = 205.0
+text = "Select custom File"
+load = false
+
+[node name="ProcessButton" type="Button" parent="ToolContainer"]
+margin_left = 209.0
+margin_right = 271.0
+margin_bottom = 20.0
+text = "Process"
+
+[node name="PreviewLabel" type="Label" parent="."]
+margin_top = 24.0
+margin_right = 1024.0
+margin_bottom = 38.0
+text = "Preview:"
+
+[node name="PreviewRect" type="TextureRect" parent="."]
+margin_top = 42.0
+margin_right = 1024.0
+margin_bottom = 42.0
+
+[node name="RemapLabel" type="Label" parent="."]
+margin_top = 46.0
+margin_right = 1024.0
+margin_bottom = 60.0
+text = "Remap:"
+
+[node name="RemapRect" type="TextureRect" parent="."]
+margin_top = 64.0
+margin_right = 1024.0
+margin_bottom = 64.0
+
+[node name="JSONOutput" type="TextEdit" parent="."]
+margin_top = 68.0
+margin_right = 1024.0
+margin_bottom = 368.0
+rect_min_size = Vector2( 300, 300 )
+text = "Empty output"
+readonly = true

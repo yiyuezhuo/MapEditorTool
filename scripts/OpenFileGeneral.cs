@@ -43,14 +43,13 @@ public class OpenFileGeneral : Button
         {
             tcs = new TaskCompletionSource<ImageData>();
             fileDialog.Popup_();
-            imageData = await tcs.Task; // type = ".jpg", ".png", ...
-            imageData.type = imageData.type.Replace(".", ""); // solid?
+            imageData = await tcs.Task; // type = "jpg", "png", ...
         }
         // TODO: normalize type string here
         return imageData; // type = "jpg", "png", ...
     }
 
-    Image Decode(ImageData imageData)
+    public static Image Decode(ImageData imageData)
     {
         var image = new Image();
         Error imageError;
@@ -77,7 +76,12 @@ public class OpenFileGeneral : Button
         return image;
     }
 
-    async Task OnPressed()
+    void OnPressed()
+    {
+        var _ = OnPressedAsync(); // suppress a warning and an error of "Attempted to convert an unmarshallable managed type to Variant. Name: 'Task`1' Encoding: 21."
+    }
+
+    async Task OnPressedAsync()
     {
         GD.Print("OnPressed");
 
@@ -103,17 +107,25 @@ public class OpenFileGeneral : Button
     void OnFileDialogFileSelected(string path)
     {
         GD.Print($"OnFileDialogFileSelected: {path}");
-        ReadDataFromPath(path);
+        var imageData = ReadDataFromPath(path);
+        tcs.TrySetResult(imageData);
     }
 
-    void ReadDataFromPath(string path)
+    public static ImageData ReadDataFromPath(string path)
+    {
+        var bytes = ReadBytesFromPath(path);
+        var type = System.IO.Path.GetExtension(path);
+        type = type.Replace(".", ""); // solid?
+        return new ImageData{data=bytes, type=type};
+    }
+
+    public static byte[] ReadBytesFromPath(string path)
     {
         var file = new File();
         file.Open(path, File.ModeFlags.Read);
         var bytes = file.GetBuffer((long)file.GetLen());
         file.Close();
 
-        var type = System.IO.Path.GetExtension(path);
-        tcs.TrySetResult(new ImageData{data=bytes, type=type});
+        return bytes;
     }
 }
