@@ -121,11 +121,21 @@ public class OpenFileGeneral : Button
 
     public static byte[] ReadBytesFromPath(string path)
     {
+        // var resource = GD.Load(path);
+        // var resource = GD.Load("absc");
+        // GD.Print(resource);
+        
         var file = new File();
-        file.Open(path, File.ModeFlags.Read);
+        var error = file.Open(path, File.ModeFlags.Read);
+
+        if(error != Error.Ok)
+            throw new ArgumentException($"Failed to open file: {error}");
+        
         var bytes = file.GetBuffer((long)file.GetLen());
         file.Close();
 
         return bytes;
+        
+        // return (byte[])(object)resource;
     }
 }
