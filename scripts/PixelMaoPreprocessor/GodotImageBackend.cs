@@ -39,7 +39,7 @@ public class ImageGodotBackend : IImageBackend<Color>
         {
             case "png":
             case "PNG":
-                imageError = image.LoadPngFromBuffer(data);
+                imageError = image.LoadPngFromBuffer(data); // Breaking in method containing those functions will break debugger for some reason.
                 break;
             case "jpg":
             case "jpeg":
@@ -54,7 +54,7 @@ public class ImageGodotBackend : IImageBackend<Color>
             default:
                 throw new ArgumentException($"Unsupported image format: {type}");
         }
-        GD.Print(imageError);
+        // GD.Print(imageError); // Since the bug of debugger, we may need this output to determine error.  
         return image;
     }
 

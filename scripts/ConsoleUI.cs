@@ -101,7 +101,6 @@ public class ConsoleUI : VBoxContainer
         // var backend = new ImageSharpBackend();
         var backend = new ImageGodotBackend(); // trait?
 
-        // var processor = new PixelMapPreprocessor<Rgba32>(new ImageSharpBackend());
         var result = PixelMapPreprocessor.Process(backend, imageData.data, imageData.type);
 
         var image = new Image();
