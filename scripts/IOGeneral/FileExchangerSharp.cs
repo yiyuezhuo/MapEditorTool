@@ -34,9 +34,13 @@ public class FileExchangerSharp : Node
         return new ImageData(){data = (byte[])signalArgs[0], type = (string)signalArgs[1]};
     }
 
-
     public void SaveImage(Image image, string fileName)
     {
         html5file.Call("save_image", image, fileName);
+    }
+
+    public void SaveData(byte[] buffer, string fileName)
+    {
+        html5file.Call("save_data", buffer, fileName);
     }
 }

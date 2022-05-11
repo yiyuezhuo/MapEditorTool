@@ -5,7 +5,7 @@ namespace references
 using Godot;
 using System.Threading.Tasks;
 
-public class HTML5FileExchange : Godot.Object // We need Godot.Object to use JavaScript.CreateCallback
+public class HTML5FileExchange : Godot.Object // We need Godot.Object to use it as the first argument of JavaScript.CreateCallback
 {
 
     JavaScriptObject jsCallback;
@@ -15,11 +15,10 @@ public class HTML5FileExchange : Godot.Object // We need Godot.Object to use Jav
 
     public HTML5FileExchange()
     {
-        // if(OS.GetName() == "HTML5" && OS.HasFeature("JavaScript"))
         InitializeEngine();
     }
 
-    bool supported {get => OS.GetName() == "HTML5" && OS.HasFeature("JavaScript");}
+    // bool supported {get => OS.GetName() == "HTML5" && OS.HasFeature("JavaScript");}
 
     void InitializeEngine()
     {
@@ -52,7 +51,7 @@ public class HTML5FileExchange : Godot.Object // We need Godot.Object to use Jav
         jsCallback = JavaScript.CreateCallback(this, nameof(LoadHandler));
     }
 
-    public void LoadHandler()
+    void LoadHandler()
     {
         GD.Print("LoadHandler");
         tcs.TrySetResult(true);

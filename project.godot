@@ -11,13 +11,13 @@ config_version=4
 [application]
 
 config/name="MapEditorTool"
-run/main_scene="res://scenes/ConsoleUI.tscn"
+run/main_scene="res://scenes/ImageShower.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
 HTML5File="*res://addons/HTML5FileExchange/HTML5FileExchange.gd"
-FileExchangerSharp="*res://scripts/FileExchangerSharp.cs"
+FileExchangerSharp="*res://scripts/IOGeneral/FileExchangerSharp.cs"
 
 [editor_plugins]
 

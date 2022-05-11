@@ -79,8 +79,8 @@ public class ConsoleUI : VBoxContainer
     async Task DoProcessAsync(ImageData imageData)
     {
         var message = "Processing...";
-        if(openFileGeneral.IsHTML5())
-            message += "  (Warning: HTML5 version is 5x slower than native in the processing)";
+        if(IOFileGeneral.IsHTML5())
+            message += "   (Warning: HTML5 version is 20x slower than native for the processing)";
 
         Message(message);
 

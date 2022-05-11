@@ -4,13 +4,17 @@ using System;
 public class ImageShower : Node
 {
     OpenFileGeneral openFileGeneral;
+    SaveFileGeneral saveFileGeneral;
     TextureRect textureRect;
 
     public override void _Ready()
     {
-        openFileGeneral = (OpenFileGeneral)GetNode("OpenFileGeneral");
+        openFileGeneral = (OpenFileGeneral)GetNode("TopBar/OpenFileGeneral");
+        saveFileGeneral = (SaveFileGeneral)GetNode("TopBar/SaveFileGeneral");
+
         textureRect = (TextureRect)GetNode("TextureRect");
 
+        openFileGeneral.readCompleted += OnReadCompleted;
         openFileGeneral.loadCompleted += OnLoadCompleted;
     }
 
@@ -21,5 +25,11 @@ public class ImageShower : Node
         var tex = new ImageTexture();
         tex.CreateFromImage(image);
         textureRect.Texture = tex;
+    }
+
+    public void OnReadCompleted(object sender, ImageData imageData)
+    {
+        saveFileGeneral.BindData(imageData.data);
+        saveFileGeneral.defaultName = $"download.{imageData.type}";
     }
 }

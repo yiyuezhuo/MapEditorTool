@@ -81,4 +81,7 @@ func save_image(image:Image, fileName:String = "export.png")->void:
 	
 	image.clear_mipmaps()
 	var buffer = image.save_png_to_buffer()
+	save_data(buffer, fileName)
+
+func save_data(buffer:PoolByteArray, fileName:String)->void:
 	JavaScript.download_buffer(buffer, fileName)
