@@ -3,9 +3,9 @@ using System;
 
 public class SideData
 {
-    public string id;
-    public string name;
-    public Color color;
+    public string id="";
+    public string name="";
+    public Color color=new Color(1,1,1,1);
 }
 
 
@@ -63,12 +63,6 @@ public class SideCard : VBoxContainer
     public event EventHandler addButtonPressed;
     public event EventHandler deleteButtonPressed;
 
-    /*
-    public event EventHandler<string> idLineEditTextChanged;
-    public event EventHandler<string> nameLineEditTextChanged;
-    public event EventHandler<Color> colorPickerButtonColorChanged;
-    */
-
     public override void _Ready()
     {
         indexLabel = (Label)GetNode(indexLabelPath);
@@ -79,13 +73,8 @@ public class SideCard : VBoxContainer
         ((Button)GetNode(deleteButtonPath)).Connect("pressed", this, nameof(OnDeleteButtonPressed));
 
         idLineEdit = (LineEdit)GetNode(idLineEditPath);
-        // idLineEdit.Connect("text_changed", this, nameof(OnIdLineEditTextChanged));
-
         nameLineEdit = (LineEdit)GetNode(nameLineEditPath);
-        // nameLineEdit.Connect("text_changed", this, nameof(OnNameLineEditTextChanged));
-
         colorPickerButton = (ColorPickerButton)GetNode(colorPickerButtonPath);
-        // colorPickerButton.Connect("color_changed", this, nameof(OnColorPickerButtonColorChanged));
     }
 
     void OnUpButtonPressed() => upButtonPressed?.Invoke(this, EventArgs.Empty);
@@ -99,10 +88,4 @@ public class SideCard : VBoxContainer
        QueueFree();
        deleteButtonPressed?.Invoke(this, EventArgs.Empty);
     }
-
-    /*
-    void OnIdLineEditTextChanged(string newText) => idLineEditTextChanged?.Invoke(this, newText);
-    void OnNameLineEditTextChanged(string newText) => nameLineEditTextChanged?.Invoke(this, newText);
-    void OnColorPickerButtonColorChanged(Color color) => colorPickerButtonColorChanged?.Invoke(this, color);
-    */
 }

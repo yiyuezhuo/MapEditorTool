@@ -10,19 +10,17 @@ public class SideCardContainer : VBoxContainer
 
     Control cardContainer;
 
-    List<SideData> dataList = new List<SideData>();
-    Dictionary<string, SideData> dataMap = new Dictionary<string, SideData>();
+    List<SideCard> cardList = new List<SideCard>();
 
     public override void _Ready()
     {
         cardContainer = (Control)GetNode(cardContainerPath);
 
-        // ResetIndex();
-        foreach(Node child in cardContainer.GetChildren())
+        foreach(Node child in cardContainer.GetChildren()) // clear placeholder
             child.QueueFree();
 
-        AddCard(new SideData());
-        AddCard(new SideData());
+        AddData(new SideData(){id="french", name="French", color = new Color(0,0,1)});
+        AddData(new SideData(){id="alliance", name="Alliance", color = new Color(1,0,0)});
     }
 
     SideCard CreateCard()
@@ -34,21 +32,33 @@ public class SideCardContainer : VBoxContainer
         card.addButtonPressed += OnCardAddButtonPressed;
         card.deleteButtonPressed += OnCardDeleteButtonPressed;
 
-        /*
-        card.idLineEditTextChanged += OnCardIdLineEditTextChanged;
-        card.nameLineEditTextChanged += OnCardNameLineEditTextChanged;
-        card.colorPickerButtonColorChanged += OnCardColorPickerButtonColorChanged;
-        */
-
         return card;
     }
 
-    void AddCard(SideData data)
+    SideCard AddCard(SideData data)
     {
         var card = CreateCard();
         cardContainer.AddChild(card);
         card.data = data;
-        card.index = cardContainer.GetChildCount() - 1;
+
+        return card;
+    }
+
+    void AddData(SideData data)
+    {
+        var card = AddCard(data);
+        card.index = cardList.Count;
+        cardList.Add(card);
+    }
+
+    void InsertData(SideData data, int index)
+    {
+        var card = AddCard(data);
+        card.index = index;
+        cardList.Insert(index, card);
+        cardContainer.MoveChild(card, index);
+
+        ResetIndex();
     }
 
     public void BindData()
@@ -59,11 +69,31 @@ public class SideCardContainer : VBoxContainer
     void OnCardUpButtonPressed(object sender, EventArgs _)
     {
         var idx = ((SideCard)sender).index;
+
+        if(idx >= 1)
+        {
+            var upCard = cardList[idx - 1];
+            cardList[idx - 1] = cardList[idx];
+            cardList[idx] = upCard;
+            cardContainer.MoveChild(upCard, idx);
+
+            ResetIndex();
+        }
     }
 
     void OnCardDownButtonPressed(object sender, EventArgs _)
     {
         var idx = ((SideCard)sender).index;
+
+        if(idx <= cardList.Count-2)
+        {
+            var downCard = cardList[idx + 1];
+            cardList[idx + 1] = cardList[idx];
+            cardList[idx] = downCard;
+            cardContainer.MoveChild(downCard, idx);
+
+            ResetIndex();
+        }
     }
 
     void OnCardAddButtonPressed(object sender, EventArgs _)
@@ -71,38 +101,28 @@ public class SideCardContainer : VBoxContainer
         GD.Print("OnCardAddButtonPressed");
         var idx = ((SideCard)sender).index;
 
-        AddCard(new SideData());
+        InsertData(new SideData(), idx);
+
         ResetIndex();
     }
     void OnCardDeleteButtonPressed(object sender, EventArgs _)
     {
-        var idx = ((SideCard)sender).index;
+        var card = (SideCard)sender;
+        cardList.RemoveAt(card.index);
+
+        if(cardList.Count == 0)
+            AddData(new SideData());
+
         ResetIndex();
     }
 
     void ResetIndex()
     {
         var index = 0;
-        foreach(SideCard card in cardContainer.GetChildren())
+        foreach(var card in cardList)
         {
             card.index = index;
             index++;
         }
     }
-
-    /*
-    void OnCardIdLineEditTextChanged(object sender, string s)
-    {
-        var idx = ((SideCard)sender).index;
-    }
-
-    void OnCardNameLineEditTextChanged(object sender, string s)
-    {
-        var idx = ((SideCard)sender).index;
-    }
-    void OnCardColorPickerButtonColorChanged(object sender, Color color)
-    {
-        var idx = ((SideCard)sender).index;
-    }
-    */
 }

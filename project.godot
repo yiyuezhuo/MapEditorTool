@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="MapEditorTool"
-run/main_scene="res://scenes/ConsoleUI.tscn"
+run/main_scene="res://scenes/SideCardContainer.tscn"
 config/icon="res://icon.png"
 
 [autoload]

@@ -66,7 +66,7 @@ margin_top = 5.0
 margin_right = 510.0
 margin_bottom = 19.0
 size_flags_horizontal = 3
-text = "ID:"
+text = "ID"
 
 [node name="IDLineEdit" type="LineEdit" parent="IDRow"]
 margin_left = 514.0
@@ -84,7 +84,7 @@ margin_top = 5.0
 margin_right = 510.0
 margin_bottom = 19.0
 size_flags_horizontal = 3
-text = "Name:"
+text = "Name"
 
 [node name="NameLineEdit" type="LineEdit" parent="NameRow"]
 margin_left = 514.0
@@ -102,7 +102,7 @@ margin_top = 3.0
 margin_right = 510.0
 margin_bottom = 17.0
 size_flags_horizontal = 3
-text = "Color:"
+text = "Color"
 
 [node name="ColorPickerButton" type="ColorPickerButton" parent="ColorRow"]
 margin_left = 514.0
