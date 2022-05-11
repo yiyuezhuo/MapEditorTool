@@ -63,6 +63,9 @@ public class ConsoleUI : VBoxContainer
     {
         // var image = OpenFileGeneral.Decode(imageData);
         var image = ImageGodotBackend.Decode(imageData.data, imageData.type);
+        // var processor = new PixelMapPreprocessor<Color>(new ImageGodotBackend());
+        // var image = processor.Decode()
+
         var tex = new ImageTexture();
         tex.CreateFromImage(image, 0);
         
@@ -95,9 +98,11 @@ public class ConsoleUI : VBoxContainer
 
     void DoProcessCore(ImageData imageData)
     {
-        // var backend = new ImageSharpBackend(); // trait?
+        // var backend = new ImageSharpBackend();
         var backend = new ImageGodotBackend(); // trait?
-        var result = backend.Process(imageData.data, imageData.type);
+
+        // var processor = new PixelMapPreprocessor<Rgba32>(new ImageSharpBackend());
+        var result = PixelMapPreprocessor.Process(backend, imageData.data, imageData.type);
 
         var image = new Image();
         image.LoadPngFromBuffer(result.data);
@@ -105,7 +110,8 @@ public class ConsoleUI : VBoxContainer
         tex.CreateFromImage(image, 0);
 
         remapRect.Texture = tex;
-        jsonOutput.Text = $"Number of areas is {result.areaMap.Count}";
+        // jsonOutput.Text = $"Number of areas is {result.areaMap.Count}";
+        jsonOutput.Text = PixelMapPreprocessor.ResultToJson(backend, result);
     }
 
     void OnProcessButtonPressed()

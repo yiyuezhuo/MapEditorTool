@@ -14,10 +14,17 @@ public class ImageGodotProxy : IImage<Color>
 
 public class ImageGodotBackend : IImageBackend<Color>
 {
-    public IImage<Color> CreateImage(int width, int height)
+    public static Image CreateImage(int width, int height)
     {
         var image = new Image();
         image.Create(width, height, false, Image.Format.Rgba8);
+        return image;
+    }
+
+    IImage<Color> IImageBackend<Color>.CreateImage(int width, int height)
+    {
+        var image = CreateImage(width, height);
+        image.Lock();
         return new ImageGodotProxy(){image=image};
         // image.Fill(colorInit);
     }
@@ -44,20 +51,23 @@ public class ImageGodotBackend : IImageBackend<Color>
             case "WEBP":
                 imageError = image.LoadWebpFromBuffer(data);
                 break;
+            default:
+                throw new ArgumentException($"Unsupported image format: {type}");
         }
+        GD.Print(imageError);
         return image;
     }
 
     IImage<Color> IImageBackend<Color>.Decode(byte[] data, string type)
     {
         var image = Decode(data, type);
+        image.Lock();
         return new ImageGodotProxy(){image=image};
     }
 
-    public Color CreateColor(byte r, byte g, byte b, byte a) => new Color(r, g, b, a);
+    public Color CreateColor(byte r, byte g, byte b, byte a) => Color.Color8(r, g, b, a);
 
-    public PixelMapPreprocessor<Color>.Result Process(byte[] data, string type)
-    {
-        return PixelMapPreprocessor<Color>.Process(this, data, type);
-    }
+    static int F2I(float x) => (int)(x * 255); // or (int)Mathf.Round(x * 255); ?
+
+    public int[] EncodeColor(Color c) => new int[]{F2I(c.r), F2I(c.g), F2I(c.b), F2I(c.a)};
 }

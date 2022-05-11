@@ -1,6 +1,8 @@
 using System;
 // using System.IO;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.Linq;
 
 public class Area<TC>
 {
@@ -34,19 +36,22 @@ public interface IImageBackend<TC>
     IImage<TC> CreateImage(int width, int height);
     IImage<TC> Decode(byte[] data, string type);
     TC CreateColor(byte r, byte g, byte b, byte a);
-    
+    int[] EncodeColor(TC color);
 }
 
 
-public static class PixelMapPreprocessor<TC>
+public static class PixelMapPreprocessor
 {
-    public class Result
-    {
-        public byte[] data;
-        public Dictionary<TC, Area<TC>> areaMap;
-    }
+    /*
+    IImageBackend<TC> backend;
 
-    public static Result Process(IImageBackend<TC> backend, byte[] data, string type)
+    public PixelMapPreprocessor(IImageBackend<TC> backend)
+    {
+        this.backend = backend;
+    }
+    */
+
+    public static Result<TC> Process<TC>(IImageBackend<TC> backend, byte[] data, string type)
     {
         var img = backend.Decode(data, type);
 
@@ -60,8 +65,11 @@ public static class PixelMapPreprocessor<TC>
 
         var remapImg = backend.CreateImage(width, height);
         for(int y=0; y<height; y++)
+        {
+            // System.Console.WriteLine(y);
             for(int x=0; x<width; x++)
             {
+                // System.Console.WriteLine(x);
                 // var baseColor = img.GetPixel(x, y);
                 var baseColor = img[x, y]; // TODO: https://docs.sixlabors.com/articles/imagesharp/pixelbuffers.html
                 Area<TC> area; // C# 8 requires Nullable reference type
@@ -83,6 +91,7 @@ public static class PixelMapPreprocessor<TC>
                 if(x == 0 || y == 0 || y == height - 1 || x == height - 1)
                     area.IsEdge = true;
             }
+        }
         
         foreach(var area in areaMap.Values)
         {
@@ -114,6 +123,58 @@ public static class PixelMapPreprocessor<TC>
                 }
             }
 
-        return new Result(){data = remapImg.ToPngBytes(), areaMap=areaMap};
+        return new Result<TC>(){data = remapImg.ToPngBytes(), areaMap=areaMap};
     }
+
+    public class Result<TC>
+    {
+        public byte[] data;
+        public Dictionary<TC, Area<TC>> areaMap;
+    }
+
+    [Serializable]
+    class AreaReduced<TC>
+    {
+        public int[] BaseColor;// = new int[4];
+        public int[] RemapColor;// = new int[4];
+        public int Points;
+        public float X;
+        public float Y;
+        public List<int[]> Neighbors;
+        public bool IsEdge;
+
+        // static int[] EncodeColor(TC c) => new int[]{c.R, c.G, c.B, c.A};
+
+        public AreaReduced(IImageBackend<TC> backend, Area<TC> area)
+        {
+            Neighbors = new List<int[]>();
+            foreach(var neiArea in area.Neighbors)
+                Neighbors.Add(backend.EncodeColor(neiArea.BaseColor));
+
+            BaseColor = backend.EncodeColor(area.BaseColor);
+            RemapColor = backend.EncodeColor(area.RemapColor);
+
+            Points = area.Points;
+            X = area.X;
+            Y = area.Y;
+            IsEdge = area.IsEdge;
+        }
+    }
+
+    [Serializable]
+    class JsonResult<TC>
+    {
+        public List<AreaReduced<TC>> Areas;// = new List<AreaReduced>();
+        public JsonResult(List<AreaReduced<TC>> Areas) => this.Areas = Areas;
+    }
+
+    public static string ResultToJson<TC>(IImageBackend<TC> backend, Result<TC> result)
+    {
+        var reduceIter = from area in result.areaMap.Values select new AreaReduced<TC>(backend, area);
+        var res = new JsonResult<TC>(reduceIter.ToList());
+        var jsonString = JsonConvert.SerializeObject(res);
+        // jsonString = JsonConvert.SerializeObject(res, Formatting.Indented); // Well, I would like a custom depth, though.
+        return jsonString;
+    }
+
 }

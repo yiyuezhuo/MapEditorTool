@@ -41,8 +41,12 @@ public class ImageSharpBackend : IImageBackend<Rgba32>
         return new Rgba32(r, g, b, a);
     }
 
+    /*
     public PixelMapPreprocessor<Rgba32>.Result Process(byte[] data, string type)
     {
         return PixelMapPreprocessor<Rgba32>.Process(this, data, type);
     }
+    */
+
+    public int[] EncodeColor(Rgba32 c) => new int[]{c.R, c.G, c.B, c.A};
 }

@@ -76,3 +76,4 @@ margin_bottom = 386.0
 rect_min_size = Vector2( 300, 300 )
 text = "Empty output"
 readonly = true
+wrap_enabled = true
