@@ -37,13 +37,6 @@ public class SaveFileGeneral : IOFileGeneral
         }
     }
 
-    /*
-    protected override void OnFileDialogConfirmed()
-    {
-        GD.Print("OnFileDialogConfirmed");
-    }
-    */
-
     protected override void OnFileDialogFileSelected(string path)
     {
         GD.Print($"OnFileDialogFileSelected: {path}");

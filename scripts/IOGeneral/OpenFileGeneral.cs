@@ -56,17 +56,6 @@ public class OpenFileGeneral : IOFileGeneral
         loadCompleted?.Invoke(this, image);
     }
 
-    /*
-    protected override void OnFileDialogConfirmed()
-    {
-        var path = fileDialog.CurrentPath;
-        GD.Print($"FileDialog Confirmed: {path}");
-
-        var imageData = ReadDataFromPath(path);
-        tcs.TrySetResult(imageData);
-    }
-    */
-
     protected override void OnFileDialogFileSelected(string path)
     {
         GD.Print($"OnFileDialogFileSelected: {path}");

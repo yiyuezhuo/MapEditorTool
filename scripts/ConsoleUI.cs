@@ -63,8 +63,6 @@ public class ConsoleUI : VBoxContainer
     {
         // var image = OpenFileGeneral.Decode(imageData);
         var image = ImageGodotBackend.Decode(imageData.data, imageData.type);
-        // var processor = new PixelMapPreprocessor<Color>(new ImageGodotBackend());
-        // var image = processor.Decode()
 
         var tex = new ImageTexture();
         tex.CreateFromImage(image, 0);

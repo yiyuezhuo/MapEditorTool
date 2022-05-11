@@ -160,9 +160,6 @@ margin_top = 5.0
 bbcode_enabled = true
 bbcode_text = "[center]RichTextLabel: [color=#8ff]Tab 1[/color] is selected.[/center]"
 text = "RichTextLabel: Tab 1 is selected."
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Tab 2" type="Control" parent="MainPanel/HSplitContainer/BasicControls/VBoxContainer/TabContainer"]
 visible = false

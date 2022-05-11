@@ -1,0 +1,111 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scripts/SideCard.cs" type="Script" id=1]
+
+[node name="SideCard" type="VBoxContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+indexLabelPath = NodePath("PanelContainer/ToolRow/IndexLabel")
+upButtonPath = NodePath("PanelContainer/ToolRow/UpButton")
+downButtonPath = NodePath("PanelContainer/ToolRow/DownButton")
+addButtonPath = NodePath("PanelContainer/ToolRow/AddButton")
+deleteButtonPath = NodePath("PanelContainer/ToolRow/DeleteButton")
+idLineEditPath = NodePath("IDRow/IDLineEdit")
+nameLineEditPath = NodePath("NameRow/NameLineEdit")
+colorPickerButtonPath = NodePath("ColorRow/ColorPickerButton")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+margin_right = 1024.0
+margin_bottom = 34.0
+
+[node name="ToolRow" type="HBoxContainer" parent="PanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 1017.0
+margin_bottom = 27.0
+
+[node name="IndexLabel" type="Label" parent="PanelContainer/ToolRow"]
+margin_top = 3.0
+margin_right = 859.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+text = "0"
+
+[node name="UpButton" type="Button" parent="PanelContainer/ToolRow"]
+margin_left = 863.0
+margin_right = 893.0
+margin_bottom = 20.0
+text = "Up"
+
+[node name="DownButton" type="Button" parent="PanelContainer/ToolRow"]
+margin_left = 897.0
+margin_right = 945.0
+margin_bottom = 20.0
+text = "Down"
+
+[node name="AddButton" type="Button" parent="PanelContainer/ToolRow"]
+margin_left = 949.0
+margin_right = 986.0
+margin_bottom = 20.0
+text = "Add"
+
+[node name="DeleteButton" type="Button" parent="PanelContainer/ToolRow"]
+margin_left = 990.0
+margin_right = 1010.0
+margin_bottom = 20.0
+text = "X"
+
+[node name="IDRow" type="HBoxContainer" parent="."]
+margin_top = 38.0
+margin_right = 1024.0
+margin_bottom = 62.0
+
+[node name="IDLabel" type="Label" parent="IDRow"]
+margin_top = 5.0
+margin_right = 510.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+text = "ID:"
+
+[node name="IDLineEdit" type="LineEdit" parent="IDRow"]
+margin_left = 514.0
+margin_right = 1024.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="NameRow" type="HBoxContainer" parent="."]
+margin_top = 66.0
+margin_right = 1024.0
+margin_bottom = 90.0
+
+[node name="NameLabel" type="Label" parent="NameRow"]
+margin_top = 5.0
+margin_right = 510.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+text = "Name:"
+
+[node name="NameLineEdit" type="LineEdit" parent="NameRow"]
+margin_left = 514.0
+margin_right = 1024.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="ColorRow" type="HBoxContainer" parent="."]
+margin_top = 94.0
+margin_right = 1024.0
+margin_bottom = 114.0
+
+[node name="ColorLabel" type="Label" parent="ColorRow"]
+margin_top = 3.0
+margin_right = 510.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+text = "Color:"
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="ColorRow"]
+margin_left = 514.0
+margin_right = 1024.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
