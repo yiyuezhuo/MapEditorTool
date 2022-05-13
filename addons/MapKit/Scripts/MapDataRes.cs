@@ -13,6 +13,7 @@ public interface IRegion<TRegion>
     Color remapColor{get; set;}
     HashSet<TRegion> neighbors{get;set;}
     Vector2 center{get; set;}
+    float area{get;set;}
 }
 
 public interface IRegionData
@@ -76,6 +77,7 @@ public class RegionMapFactory<TRegionData, TRegion> where TRegionData : IRegionD
         region.baseColor = Int4ToColor(regionData.BaseColor);
         region.remapColor = Int4ToColor(regionData.RemapColor);
         region.center = new Vector2(regionData.X, regionData.Y);
+        region.area = regionData.Points;
     }
 }
 
@@ -156,13 +158,14 @@ public class Region : IArea, IRegion<Region>
     public Color remapColor{get; set;}
     public HashSet<Region> neighbors{get; set;}
     public Vector2 center{get; set;}
+    public float area{get;set;}
 
     public override string ToString()
     {
         return $"Region({baseColor}, {center})";
     }
 
-    int ToId()
+    public int ToColorId()
     {
         return remapColor.g8 * 256 + remapColor.r8;
     }

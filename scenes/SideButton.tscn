@@ -6,7 +6,7 @@
 [node name="SideButton" type="Button"]
 margin_right = 12.0
 margin_bottom = 20.0
-text = "Side"
+text = "Edit Side"
 script = ExtResource( 2 )
 windowDialogPath = NodePath("WindowDialog")
 
@@ -15,6 +15,5 @@ margin_right = 48.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 400, 600 )
 window_title = "Side setting"
-resizable = true
 
 [node name="SideCardContainer" parent="WindowDialog" instance=ExtResource( 1 )]

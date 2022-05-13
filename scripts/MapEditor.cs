@@ -5,6 +5,9 @@ using System.Collections.Generic;
 public class Region : YYZ.MapKit.Region, YYZ.MapKit.IRegion<Region>
 {
     public new HashSet<Region> neighbors{get; set;}
+
+    public string name = "";
+    public string id = "";
 }
 
 public class MapData : YYZ.MapKit.MapDataCore<Region>
@@ -23,7 +26,7 @@ public class MapData : YYZ.MapKit.MapDataCore<Region>
         {
             var a = KV.Value;
             retMap[KV.Key] = remap[KV.Value] = new Region(){
-                baseColor=a.BaseColor, remapColor=a.RemapColor, center=new Vector2(a.X, a.Y),
+                baseColor=a.BaseColor, remapColor=a.RemapColor, center=new Vector2(a.X, a.Y), area=a.Points,
                 neighbors = new HashSet<Region>()
             };
         }
@@ -37,71 +40,24 @@ public class MapData : YYZ.MapKit.MapDataCore<Region>
     }
 }
 
-/*
-class MapDataRes : YYZ.MapKit.IMapDataRes<Region>
-{
-    MapData mapData;
-
-    public MapDataRes(Image baseImage, Dictionary<Color, Region> areaMap)
-    {
-        mapData = new MapData(baseImage, areaMap);
-    }
-
-    public YYZ.MapKit.IMapData<Region> GetInstance() => mapData;
-}
-*/
-
 public class MapEditor : Control
 {
     [Export] PackedScene mapViewScene;
     [Export] NodePath selectGeneralPath;
-    [Export] Resource initialImageRes;
+    [Export] NodePath regionInfoWindowPath;
 
     MapView mapView;
     MapShower mapShower;
+    RegionInfoWindow regionInfoWindow;
 
     public override void _Ready()
     {
         var selectGeneral = (SelectGeneral)GetNode(selectGeneralPath);
         selectGeneral.selected += OnSelectGeneralSelected;
 
+        regionInfoWindow = (RegionInfoWindow)GetNode(regionInfoWindowPath);
+
         selectGeneral.Select(0);
-
-        /*
-        var initialImage = (Image)initialImageRes;
-        initialImage.Lock();
-        CreateMapView(initialImage);
-        */
-
-        /*
-        var factory = new YYZ.MapKit.RegionMapFactory<YYZ.MapKit.RegionData, Region>();
-
-        var backend = new ImageGodotBackend(); // trait?
-        var result = PixelMapPreprocessor.Process(backend, new ImageGodotProxy(){image=initialImage});
-        var mapData = new MapData(initialImage, result.areaMap);
-
-        mapView = mapViewScene.Instance<MapView>();
-
-        var baseTexture = new ImageTexture();
-        baseTexture.CreateFromImage(initialImage, 0);
-        // FIXME: disable fitlers
-
-        var remapImage = new Image();
-        remapImage.LoadPngFromBuffer(result.data);
-        var remapTexture = new ImageTexture();
-        remapTexture.CreateFromImage(remapImage, 0);
-        // TODO: Provide a ToGodotImage API to remove the unnecessary encode & decode overhead when we're using ImageGodotBackend.
-
-        mapShower = (MapShower)mapView.GetNode(mapView.mapShowerPath);
-        mapShower.mapData = mapData;
-        mapShower.Texture = baseTexture;
-
-        var material = (ShaderMaterial)mapShower.Material;
-        material.SetShaderParam("base_texture", baseTexture);
-        material.SetShaderParam("remap_texture", remapTexture);
-
-        AddChild(mapView);
-        */
     }
 
     void OnSelectGeneralSelected(object sender, ImageData imageData)
@@ -115,6 +71,11 @@ public class MapEditor : Control
         var image = ImageGodotBackend.Decode(imageData.data, imageData.type);
         image.Lock();
         CreateMapView(image);
+    }
+
+    void OnAreaSelected(object sender, Region region)
+    {
+        regionInfoWindow.SetData(region);
     }
 
     void CreateMapView(Image initialImage)
@@ -140,6 +101,8 @@ public class MapEditor : Control
         var material = (ShaderMaterial)mapShower.Material;
         material.SetShaderParam("base_texture", baseTexture);
         material.SetShaderParam("remap_texture", remapTexture);
+
+        mapShower.areaSelectedEvent += OnAreaSelected;
 
         AddChild(mapView);
     }

@@ -1,12 +1,6 @@
 using Godot;
 using System;
 
-/*
-public interface IImageBackendRich : IImageBackend<Color>
-{
-    Image ToGodotImage(ImageGodotProxy image);
-}
-*/
 
 public class ImageGodotProxy : IImage<Color>
 {
@@ -74,9 +68,10 @@ public class ImageGodotBackend : IImageBackend<Color> // Rich
 
     public Color CreateColor(byte r, byte g, byte b, byte a) => Color.Color8(r, g, b, a);
 
-    static int F2I(float x) => (int)(x * 255); // or (int)Mathf.Round(x * 255); ?
+    public static int F2I(float x) => (int)(x * 255); // or (int)Mathf.Round(x * 255); ?
 
-    public int[] EncodeColor(Color c) => new int[]{F2I(c.r), F2I(c.g), F2I(c.b), F2I(c.a)};
+    public static int[] EncodeColor(Color c) => new int[]{F2I(c.r), F2I(c.g), F2I(c.b), F2I(c.a)};
+    int[] IImageBackendWeak<Color>.EncodeColor(Color c) => EncodeColor(c);
 
-    // public Image ToGodotImage()
+    public static string StringfyColor(Color c) => $"{F2I(c.r)},{F2I(c.g)},{F2I(c.b)},{F2I(c.a)}";
 }

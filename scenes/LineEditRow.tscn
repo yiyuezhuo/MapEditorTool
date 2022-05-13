@@ -1,0 +1,25 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scripts/LineEditRow.cs" type="Script" id=1]
+
+[node name="LineEditRow" type="HBoxContainer"]
+margin_right = 200.0
+margin_bottom = 24.0
+script = ExtResource( 1 )
+lineEditPath = NodePath("LineEdit")
+
+[node name="Label" type="Label" parent="."]
+margin_top = 5.0
+margin_right = 78.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Label"
+
+[node name="LineEdit" type="LineEdit" parent="."]
+margin_left = 82.0
+margin_right = 200.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+editable = false
