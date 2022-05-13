@@ -8,7 +8,9 @@ public class Region : YYZ.MapKit.Region, YYZ.MapKit.IRegion<Region>
 
     public string name = "";
     public string id = "";
+    public SideData side;
 }
+
 
 public class MapData : YYZ.MapKit.MapDataCore<Region>
 {
@@ -45,10 +47,14 @@ public class MapEditor : Control
     [Export] PackedScene mapViewScene;
     [Export] NodePath selectGeneralPath;
     [Export] NodePath regionInfoWindowPath;
+    [Export] NodePath regionEditDialogPath;
 
     MapView mapView;
     MapShower mapShower;
     RegionInfoWindow regionInfoWindow;
+    RegionEditDialog regionEditDialog;
+    RegionEdit regionEdit;
+
 
     public override void _Ready()
     {
@@ -56,6 +62,8 @@ public class MapEditor : Control
         selectGeneral.selected += OnSelectGeneralSelected;
 
         regionInfoWindow = (RegionInfoWindow)GetNode(regionInfoWindowPath);
+        regionEditDialog = (RegionEditDialog)GetNode(regionEditDialogPath);
+        regionEdit = regionEditDialog.regionEdit;
 
         selectGeneral.Select(0);
     }
@@ -76,6 +84,20 @@ public class MapEditor : Control
     void OnAreaSelected(object sender, Region region)
     {
         regionInfoWindow.SetData(region);
+    }
+
+    void OnAreaClicked(object sender, Region region)
+    {
+        // https://www.reddit.com/r/godot/comments/fps3e4/world_coordinates_from_control_node_on_canvaslayer/
+        // https://docs.godotengine.org/en/3.2/tutorials/2d/2d_transforms.html
+        // https://docs.godotengine.org/en/3.2/tutorials/2d/canvas_layers.html
+
+        // var offset = new Vector2(mapShower.mapData.width / 2, mapShower.mapData.height / 2);
+        var rect2 = new Rect2(GetViewport().GetMousePosition(), regionEditDialog.RectSize);
+        // GD.Print(regionEditDialog.GetGlobalMousePosition(), rect2, regionEditDialog.GetViewport().GetMousePosition());
+        
+        // var rect2 = new Rect2(GetGlobalMousePosition(), regionEditDialog.RectSize);
+        regionEditDialog.Popup_(rect2);
     }
 
     void CreateMapView(Image initialImage)
@@ -103,6 +125,7 @@ public class MapEditor : Control
         material.SetShaderParam("remap_texture", remapTexture);
 
         mapShower.areaSelectedEvent += OnAreaSelected;
+        mapShower.areaClickEvent += OnAreaClicked;
 
         AddChild(mapView);
     }

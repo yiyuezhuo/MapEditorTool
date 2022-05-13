@@ -1,0 +1,64 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scenes/LineEditRow.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scripts/RegionEdit.cs" type="Script" id=2]
+
+[node name="RegionEdit" type="VBoxContainer"]
+margin_right = 40.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 150, 0 )
+script = ExtResource( 2 )
+optionButtonPath = NodePath("SideRow/OptionButton")
+idRowPath = NodePath("IDRow")
+nameRowPath = NodePath("NameRow")
+
+[node name="SideRow" type="HBoxContainer" parent="."]
+margin_right = 150.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 0, 24 )
+
+[node name="Label" type="Label" parent="SideRow"]
+margin_top = 5.0
+margin_right = 58.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Side"
+
+[node name="OptionButton" type="OptionButton" parent="SideRow"]
+margin_left = 62.0
+margin_right = 150.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+
+[node name="IDRow" parent="." instance=ExtResource( 1 )]
+margin_top = 28.0
+margin_right = 150.0
+margin_bottom = 52.0
+
+[node name="Label" parent="IDRow" index="0"]
+margin_right = 58.0
+text = "ID"
+
+[node name="LineEdit" parent="IDRow" index="1"]
+margin_left = 62.0
+margin_right = 150.0
+editable = true
+
+[node name="NameRow" parent="." instance=ExtResource( 1 )]
+margin_top = 56.0
+margin_right = 150.0
+margin_bottom = 80.0
+
+[node name="Label" parent="NameRow" index="0"]
+margin_right = 58.0
+text = "Name"
+
+[node name="LineEdit" parent="NameRow" index="1"]
+margin_left = 62.0
+margin_right = 150.0
+editable = true
+
+[editable path="IDRow"]
+[editable path="NameRow"]

@@ -58,8 +58,11 @@ public class RegionInfoWindow : VBoxContainer
         areaRow.SetText(region.area.ToString());
         centerRow.SetText(centerText);
         neighborsRow.SetText(neighborsText);
-        sideColorRow.SetData("", new Color(0,0,0,0)); // dummy
-        idRow.SetText(region.id.ToString());
-        nameRow.SetText(region.name.ToString());
+        if(region.side != null)
+            sideColorRow.SetData(region.side.id, region.side.color);
+        else
+            sideColorRow.SetData("", new Color(0,0,0,0)); // dummy
+        idRow.SetText(region.id);
+        nameRow.SetText(region.name);
     }
 }

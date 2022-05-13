@@ -18,8 +18,6 @@ public class SideCardContainer : VBoxContainer
 
         Reset();
 
-        // AddData(new SideData(){id="french", name="French", color = new Color(0,0,1)});
-        // AddData(new SideData(){id="alliance", name="Alliance", color = new Color(1,0,0)});
         BindData(new List<SideData>(){
             new SideData(){id="french", name="French", color = new Color(0,0,1)},
             new SideData(){id="alliance", name="Alliance", color = new Color(1,0,0)}

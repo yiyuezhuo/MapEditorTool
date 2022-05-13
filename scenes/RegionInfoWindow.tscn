@@ -112,7 +112,7 @@ text = "Neighbors"
 [node name="LineEdit" parent="NeighborsRow" index="1"]
 margin_left = 102.0
 margin_right = 250.0
-text = "[1,2,3]"
+text = "1,2,3"
 
 [node name="SideRow" parent="." instance=ExtResource( 1 )]
 margin_top = 168.0
