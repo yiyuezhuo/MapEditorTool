@@ -15,8 +15,9 @@ public class ConsoleUI : VBoxContainer
 
     public override void _Ready()
     {
-        var premadeMapOptions = (OptionButton)GetNode("ToolContainer/PremadeMapOptions");
-        openFileGeneral = (OpenFileGeneral)GetNode("ToolContainer/OpenFileGeneral");
+        // var premadeMapOptions = (OptionButton)GetNode("ToolContainer/PremadeMapOptions");
+        // openFileGeneral = (OpenFileGeneral)GetNode("ToolContainer/OpenFileGeneral");
+        var selectGeneral = (SelectGeneral)GetNode("ToolContainer/SelectGeneral");
         var processButton = (Button)GetNode("ToolContainer/ProcessButton");
 
         previewRect = (TextureRect)GetNode("PreviewRect");
@@ -24,15 +25,23 @@ public class ConsoleUI : VBoxContainer
         jsonOutput = (TextEdit)GetNode("JSONOutput");
         messageLabel = (Label)GetNode("ToolContainer/MessageLabel");
 
-        premadeMapOptions.Connect("item_selected", this, nameof(OnPremadeMapOptionsItemSelected));
-        openFileGeneral.readCompleted += OnCustomReadCompleted;
+        // premadeMapOptions.Connect("item_selected", this, nameof(OnPremadeMapOptionsItemSelected));
+        // openFileGeneral.readCompleted += OnCustomReadCompleted;
+        selectGeneral.selected += OnSelectGeneralSelected;
         processButton.Connect("pressed", this, nameof(OnProcessButtonPressed));
 
-        OnPremadeMapOptionsItemSelected(0);
+        // OnPremadeMapOptionsItemSelected(0);
+        selectGeneral.Select(0);
     }
 
     void Message(string s) => messageLabel.Text = s;
 
+    void OnSelectGeneralSelected(object sender, ImageData imageData)
+    {
+        DoSelect(imageData);
+    }
+
+    /*
     void OnPremadeMapOptionsItemSelected(int index)
     {
         GD.Print($"OnPremadeMapOptionsItemSelected: {index}");
@@ -56,6 +65,7 @@ public class ConsoleUI : VBoxContainer
 
         DoSelect(imageData);
     }
+    */
 
     void DoSelect(ImageData imageData)
     {

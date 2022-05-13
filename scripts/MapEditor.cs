@@ -84,9 +84,6 @@ public class MapEditor : Control
         remapTexture.CreateFromImage(remapImage, 0);
         // TODO: Provide a ToGodotImage API to remove the unnecessary encode & decode overhead when we're using ImageGodotBackend.
 
-        // Since it's not add to an active scene, the _ready is not called yet.
-        // var mapShower = mapView.GetMapShower(); // TODO: It's expected that it doesn't work
-        // maybe wo can public its NodePath to modify it.
         mapShower = (MapShower)mapView.GetNode(mapView.mapShowerPath);
         mapShower.mapData = mapData;
         mapShower.Texture = baseTexture;

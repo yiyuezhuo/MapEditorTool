@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="MapEditorTool"
-run/main_scene="res://scenes/MapEditor.tscn"
+run/main_scene="res://scenes/ConsoleUI.tscn"
 config/icon="res://icon.png"
 
 [autoload]
