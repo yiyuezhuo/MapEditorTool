@@ -23,7 +23,7 @@ public class ImageShower : Node
         GD.Print("OnLoadCompleted");
         
         var tex = new ImageTexture();
-        tex.CreateFromImage(image);
+        tex.CreateFromImage(image, 0);
         textureRect.Texture = tex;
     }
 

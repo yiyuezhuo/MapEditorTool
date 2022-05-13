@@ -13,7 +13,6 @@ public class ConsoleUI : VBoxContainer
 
     ImageData currentImageData;
 
-    // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
         var premadeMapOptions = (OptionButton)GetNode("ToolContainer/PremadeMapOptions");
@@ -45,7 +44,6 @@ public class ConsoleUI : VBoxContainer
         };
         var path = pathVec[index];
 
-        // var imageData = OpenFileGeneral.ReadDataFromPath(path);
         var image = (Image)GD.Load(path);
         var data = image.SavePngToBuffer(); // TODO: Is there way to "import" raw binary data? Godot import system is such a garbage.
 
@@ -61,7 +59,6 @@ public class ConsoleUI : VBoxContainer
 
     void DoSelect(ImageData imageData)
     {
-        // var image = OpenFileGeneral.Decode(imageData);
         var image = ImageGodotBackend.Decode(imageData.data, imageData.type);
 
         var tex = new ImageTexture();
@@ -100,6 +97,7 @@ public class ConsoleUI : VBoxContainer
         var backend = new ImageGodotBackend(); // trait?
 
         var result = PixelMapPreprocessor.Process(backend, imageData.data, imageData.type);
+        // TODO: Provide a ToGodotImage API to remove the unnecessary encode & decode overhead when we're using ImageGodotBackend.
 
         var image = new Image();
         image.LoadPngFromBuffer(result.data);

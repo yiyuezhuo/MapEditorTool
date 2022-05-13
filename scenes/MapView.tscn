@@ -1,0 +1,23 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://addons/MapKit/Scenes/MapView.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scripts/MapShower.cs" type="Script" id=2]
+[ext_resource path="res://scripts/MapView.cs" type="Script" id=3]
+[ext_resource path="res://addons/MapKit/Shaders/map2.gdshader" type="Shader" id=4]
+
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 4 )
+shader_param/width = 0.001
+shader_param/remap_k = 0.996094
+shader_param/remap_b = Vector2( 0.00195313, 0.00195313 )
+shader_param/selecting_color = Color( 0.5, 0, 1, 1 )
+shader_param/mode = null
+
+[node name="MapView" instance=ExtResource( 1 )]
+script = ExtResource( 3 )
+mapShowerPath = NodePath("Map")
+cameraPath = NodePath("Camera2D")
+
+[node name="Map" parent="." index="0"]
+material = SubResource( 1 )
+script = ExtResource( 2 )

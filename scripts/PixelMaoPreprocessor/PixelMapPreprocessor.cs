@@ -31,30 +31,24 @@ public interface IImage<TC>
     byte[] ToPngBytes();
 }
 
-public interface IImageBackend<TC>
+public interface IImageBackendWeak<TC>
 {
     IImage<TC> CreateImage(int width, int height);
-    IImage<TC> Decode(byte[] data, string type);
     TC CreateColor(byte r, byte g, byte b, byte a);
     int[] EncodeColor(TC color);
+
+}
+
+public interface IImageBackend<TC> : IImageBackendWeak<TC>
+{
+    IImage<TC> Decode(byte[] data, string type);
 }
 
 
 public static class PixelMapPreprocessor
 {
-    /*
-    IImageBackend<TC> backend;
-
-    public PixelMapPreprocessor(IImageBackend<TC> backend)
+    public static Result<TC> Process<TC>(IImageBackendWeak<TC> backend, IImage<TC> img)
     {
-        this.backend = backend;
-    }
-    */
-
-    public static Result<TC> Process<TC>(IImageBackend<TC> backend, byte[] data, string type)
-    {
-        var img = backend.Decode(data, type);
-
         var width = img.Width;
         var height = img.Height;
 
@@ -124,6 +118,12 @@ public static class PixelMapPreprocessor
             }
 
         return new Result<TC>(){data = remapImg.ToPngBytes(), areaMap=areaMap};
+    }
+
+    public static Result<TC> Process<TC>(IImageBackend<TC> backend, byte[] data, string type)
+    {
+        var img = backend.Decode(data, type);
+        return Process(backend, img);
     }
 
     public class Result<TC>

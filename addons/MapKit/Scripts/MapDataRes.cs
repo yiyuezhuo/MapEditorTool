@@ -79,26 +79,21 @@ public class RegionMapFactory<TRegionData, TRegion> where TRegionData : IRegionD
     }
 }
 
-public class MapData<TData, TRegion> : IMapData<TRegion> where TData : IRegionData where TRegion : IRegion<TRegion>, new()
+public class MapDataCore<TRegion> : IMapData<TRegion>
 {
     public Image baseImage;
     public int width{get; set;}
     public int height{get; set;}
     protected Dictionary<Color, TRegion> areaMap = new Dictionary<Color, TRegion>();
 
-    protected virtual RegionMapFactory<TData, TRegion> regionMapFactory{get => new RegionMapFactory<TData, TRegion>();}
-
-    public MapData(Texture baseTexture, string path)
+    public MapDataCore(Image baseImage)
     {
-        var regionJsonString = Utils.ReadText(path);
-
-        baseImage = baseTexture.GetData();
         baseImage.Lock();
 
         width = baseImage.GetWidth();
         height = baseImage.GetHeight();
 
-        areaMap = regionMapFactory.Get(regionJsonString);
+        this.baseImage = baseImage;
     }
 
     protected Vector2 WorldToMap(Vector2 worldPos)
@@ -128,8 +123,19 @@ public class MapData<TData, TRegion> : IMapData<TRegion> where TData : IRegionDa
     {
         return areaMap[color];
     }
+}
 
-    public IEnumerable<TRegion> GetAllAreas() => areaMap.Values;
+public class MapData<TData, TRegion> : MapDataCore<TRegion> where TData : IRegionData where TRegion : IRegion<TRegion>, new()
+{
+    protected virtual RegionMapFactory<TData, TRegion> regionMapFactory{get => new RegionMapFactory<TData, TRegion>();}
+
+    public MapData(Texture baseTexture, string path) : base(baseTexture.GetData())
+    {
+        var regionJsonString = Utils.ReadText(path);
+        areaMap = regionMapFactory.Get(regionJsonString);
+    }
+
+    // public IEnumerable<TRegion> GetAllAreas() => areaMap.Values;
 }
 
 // Reference implementations
