@@ -4,8 +4,6 @@ using System;
 
 public class MapView : YYZ.MapKit.MapView<Region>
 {
-    // [Export] public NodePath mapShowerPath;
-
     [Export] NodePath labelContainerPath;
     [Export] PackedScene regionLabelScene;
 
@@ -20,6 +18,8 @@ public class MapView : YYZ.MapKit.MapView<Region>
 
         labelContainer = (Node)GetNode(labelContainerPath);
     }
+
+    // TODO: refactor, move those label behaviors to a dedicated class.
 
     public void CreateLabels(IEnumerable<Region> regions)
     {

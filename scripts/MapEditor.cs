@@ -11,7 +11,6 @@ public class Region : YYZ.MapKit.Region, YYZ.MapKit.IRegion<Region>
     public SideData side;
 }
 
-
 public class MapData : YYZ.MapKit.MapDataCore<Region>
 {
     public MapData(Image baseImage, Dictionary<Color, Region> areaMap) : base(baseImage)
@@ -54,12 +53,13 @@ public class MapEditor : Control
     [Export] NodePath regionEditDialogPath;
     [Export] NodePath sideButtonPath;
     [Export] NodePath labelModeBoxPath;
+    [Export] NodePath saveFileGeneralLazyPath;
 
     RegionInfoWindow regionInfoWindow;
     RegionEditDialog regionEditDialog;
     RegionEdit regionEdit;
     SideCardContainer sideCardContainer;
-    // LabelModeBox labelModeBox;
+    SaveFileGeneralLazy saveFileGeneralLazy;
 
     // volative UI
     MapView mapView;
@@ -67,6 +67,7 @@ public class MapEditor : Control
 
     // volative state
     Dictionary<Color, Region> regionMap; // TODO: Use a more proper object, but I don't have time to develop more in this Jam.
+    List<SideData> sideDataList;
 
     public override void _Ready()
     {
@@ -81,9 +82,10 @@ public class MapEditor : Control
         sideCardContainer = sideButton.sideCardContainer;
 
         var labelModeBox = (LabelModeBox)GetNode(labelModeBoxPath);
+        saveFileGeneralLazy = (SaveFileGeneralLazy)GetNode(saveFileGeneralLazyPath);
 
         // test placeholder
-        var sideDataList = new List<SideData>(){ 
+        sideDataList = new List<SideData>(){ 
             new SideData(){id="french", name="French", color = new Color(0,0,1)},
             new SideData(){id="alliance", name="Alliance", color = new Color(1,0,0)}
         };
@@ -107,6 +109,8 @@ public class MapEditor : Control
         regionEdit.regionIdUpdated += OnRegionTextChanged;
         regionEdit.regionNameUpdated += OnRegionTextChanged;
 
+        saveFileGeneralLazy.pressed += OnSaveFileGeneralLazyPressed;
+
         // load first premade map
         selectGeneral.Select(0);
 
@@ -119,6 +123,14 @@ public class MapEditor : Control
         }
         mapShower.Flush(); // TODO: maybe we should let mapShower itself flush itself if in every frame change committed.
         */
+    }
+
+    void OnSaveFileGeneralLazyPressed(object sender, EventArgs _)
+    {
+        var jsonString = JsonExporter.ToString(sideDataList, regionMap.Values);
+        var name = "mapdata.json";
+        var data = System.Text.Encoding.UTF8.GetBytes(jsonString);
+        saveFileGeneralLazy.StartSave(data, name);
     }
 
     void OnRegionTextChanged(object sender, Region region)
@@ -160,7 +172,10 @@ public class MapEditor : Control
         regionEdit.BindRegion(region);
         regionEdit.PreparePopup();
 
-        var rect2 = new Rect2(GetViewport().GetMousePosition(), regionEditDialog.RectSize);
+        // var rect2 = new Rect2(GetViewport().GetMousePosition(), regionEditDialog.regionEdit.RectSize);
+        // var rect2 = new Rect2(GetViewport().GetMousePosition(), regionEditDialog.RectSize); 
+        // GD.Print($"RectSize={regionEditDialog.RectSize}");
+        var rect2 = new Rect2(GetViewport().GetMousePosition(), new Vector2(158, 88)); // TODO: Fix wrong rectSize in HTML5 export, hard code it here as a wordaround.
         regionEditDialog.Popup_(rect2);
     }
 
@@ -232,11 +247,6 @@ public class MapEditor : Control
 
         // Create labels
         mapView.CreateLabels(regionMap.Values); // container is initialized after entering the tree.
-    }
-
-    void CreateLabelLayer()
-    {
-
     }
 
     static Texture CreateRemapTexture(byte[] pngData) // debug shield

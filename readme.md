@@ -31,3 +31,5 @@ Tokyo: 21.13
 ```
 
 Maybe `ImageSharp` require some tunnings, but I would rather just remove the `ImageSharp` backend support.
+
+HTML5 is 20x slower in general thougn...

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://scenes/SideButton.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/MapEditor.cs" type="Script" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://scenes/SelectGeneral.tscn" type="PackedScene" id=5]
 [ext_resource path="res://scenes/RegionEditDialog.tscn" type="PackedScene" id=6]
 [ext_resource path="res://scenes/LabelModeBox.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/IOGeneral/SaveFileGeneralLazy.tscn" type="PackedScene" id=8]
 
 [node name="MapEditor" type="Control"]
 anchor_right = 1.0
@@ -19,6 +20,7 @@ regionInfoWindowPath = NodePath("CanvasLayer/VBoxContainer/Panel/RegionInfoWindo
 regionEditDialogPath = NodePath("CanvasLayer/RegionEditDialog")
 sideButtonPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/SideButton")
 labelModeBoxPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/PanelContainer/LabelModeBox")
+saveFileGeneralLazyPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/SaveFileGeneralLazy")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -28,7 +30,7 @@ margin_bottom = 40.0
 mouse_filter = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/VBoxContainer"]
-margin_right = 469.0
+margin_right = 525.0
 margin_bottom = 38.0
 
 [node name="SelectGeneral" parent="CanvasLayer/VBoxContainer/HBoxContainer" instance=ExtResource( 5 )]
@@ -49,6 +51,13 @@ margin_left = 7.0
 margin_top = 7.0
 margin_right = 182.0
 margin_bottom = 31.0
+
+[node name="SaveFileGeneralLazy" parent="CanvasLayer/VBoxContainer/HBoxContainer" instance=ExtResource( 8 )]
+margin_left = 473.0
+margin_right = 525.0
+margin_bottom = 38.0
+hint_tooltip = "Export map data as json file."
+text = "Export"
 
 [node name="Panel" type="PanelContainer" parent="CanvasLayer/VBoxContainer"]
 margin_top = 42.0

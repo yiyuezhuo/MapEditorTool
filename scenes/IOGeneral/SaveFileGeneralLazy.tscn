@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scripts/IOGeneral/SaveFileGeneralLazy.cs" type="Script" id=1]
+
+[node name="SaveFileGeneralLazy" type="Button"]
+margin_right = 12.0
+margin_bottom = 20.0
+script = ExtResource( 1 )
+fileDialogPath = NodePath("FileDialog")
+
+[node name="FileDialog" type="FileDialog" parent="."]
+margin_right = 405.0
+margin_bottom = 330.0
+rect_min_size = Vector2( 250, 87.5 )
+access = 2
+current_dir = "/godot_ws/MapEditorTool"
+current_path = "/godot_ws/MapEditorTool/"
