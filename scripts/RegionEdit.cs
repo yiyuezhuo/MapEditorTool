@@ -15,6 +15,10 @@ public class RegionEdit : VBoxContainer
     Region region;
     List<SideData> sideDataList; // TODO: generalize it to Enumerable
 
+    bool needSyncSideDataListToUI = false;
+
+    public event EventHandler<Region> regionSideUpdated;
+
     public override void _Ready()
     {
         optionButton = (OptionButton)GetNode(optionButtonPath);
@@ -34,11 +38,30 @@ public class RegionEdit : VBoxContainer
         SyncRegionToUI();
     }
 
+    public void PreparePopup()
+    {
+        if(needSyncSideDataListToUI)
+        {
+            SyncSideDataListToUI();
+            needSyncSideDataListToUI = false;
+        }
+    }
+
     public void BindSideDataList(List<SideData> sideDataList)
     {
         this.sideDataList = sideDataList;
 
-        SyncCardIterToUI();
+        SyncSideDataListToUI();
+    }
+
+    public void OnSideDataListStructureUpdated(object sender, EventArgs _)
+    {
+        needSyncSideDataListToUI = true;
+    }
+
+    public void OnSideDataIdUpdated(object sender, SideData sideData)
+    {
+        needSyncSideDataListToUI = true; // TODO: Change item text directly.
     }
 
     void SyncRegionToUI()
@@ -61,7 +84,7 @@ public class RegionEdit : VBoxContainer
         }
     }
 
-    void SyncCardIterToUI()
+    void SyncSideDataListToUI()
     {
         optionButton.Clear();
         optionButton.AddItem("");
@@ -75,19 +98,24 @@ public class RegionEdit : VBoxContainer
     {
         GD.Print($"OnOptionButtonItemSelected: {index}");
 
-        region.side = sideDataList[index - 1];
+        var sideSelected = index == 0 ? null : sideDataList[index - 1];
+        var updated = region.side != sideSelected;
+
+        region.side = sideSelected;
+        if(updated)
+            regionSideUpdated?.Invoke(this, region);
     }
 
     void OnIdRowTextChanged(object sender, string newText)
     {
-        GD.Print($"OnIdRowTextChanged: {newText}");
+        // GD.Print($"OnIdRowTextChanged: {newText}");
 
         region.id = newText;
     }
 
     void OnNameRowTextChanged(object sender, string newText)
     {
-        GD.Print($"OnNameRowTextChanged: {newText}");
+        // GD.Print($"OnNameRowTextChanged: {newText}");
 
         region.name = newText;
     }

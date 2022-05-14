@@ -10,11 +10,12 @@ public class SideCardContainer : Node
 
     Control cardContainer;
 
-    // List<SideCard> cardList = new List<SideCard>();
     List<SideData> dataList = new List<SideData>();
     Dictionary<SideData, SideCard> cardMap = new Dictionary<SideData, SideCard>();
 
-    public event EventHandler dataListIdUpdated;
+    public event EventHandler<SideData> sideDataIdUpdated; // TODO: Is it better that sideData property invoke this kind of events?
+    public event EventHandler<SideData> sideDataColorUpdated;
+    public event EventHandler<SideData> sideDeleted;
     public event EventHandler dataListStructureUpdated;
 
     public override void _Ready()
@@ -22,13 +23,6 @@ public class SideCardContainer : Node
         cardContainer = (Control)GetNode(cardContainerPath);
 
         Reset();
-
-        /*
-        BindData(new List<SideData>(){
-            new SideData(){id="french", name="French", color = new Color(0,0,1)},
-            new SideData(){id="alliance", name="Alliance", color = new Color(1,0,0)}
-        });
-        */
     }
 
     void Reset()
@@ -37,7 +31,6 @@ public class SideCardContainer : Node
             child.QueueFree();
         dataList.Clear();
         cardMap.Clear();
-        // cardList.Clear();
     }
 
     SideCard CreateCard()
@@ -49,7 +42,26 @@ public class SideCardContainer : Node
         card.addButtonPressed += OnCardAddButtonPressed;
         card.deleteButtonPressed += OnCardDeleteButtonPressed;
 
+        card.idChanged += OnSideIdChanged;
+        card.nameChanged += OnSideNameChanged;
+        card.colorChanged += OnSideColorChanged;
+
         return card;
+    }
+
+    void OnSideIdChanged(object sender, string newText)
+    {
+        sideDataIdUpdated?.Invoke(this, ((SideCard)sender).data);
+    }
+
+    void OnSideNameChanged(object sender, string newText)
+    {
+
+    }
+
+    void OnSideColorChanged(object sender, Color color)
+    {
+        sideDataColorUpdated?.Invoke(this, ((SideCard)sender).data);
     }
 
     SideCard AddCard(SideData data)
@@ -67,8 +79,6 @@ public class SideCardContainer : Node
         var card = AddCard(data);
         card.index = dataList.Count;
         dataList.Add(data);
-        // cardMap[data] = card;
-        // cardList.Add(card);
     }
 
     void InsertData(SideData data, int index)
@@ -76,8 +86,6 @@ public class SideCardContainer : Node
         var card = AddCard(data);
         card.index = index;
         dataList.Insert(index, data);
-        // cardMap[data] = card;
-        // cardList.Insert(index, card);
         cardContainer.MoveChild(card, index);
 
         ResetIndex();
@@ -95,7 +103,21 @@ public class SideCardContainer : Node
             var data = dataList[i];
             var card = AddCard(data);
             card.index = i;
-            // cardMap[data] = card;
+        }
+    }
+
+    void EndStructureUpdate() // This method should be called on ending of UI callback handler.
+    {
+        ResetIndex();
+        dataListStructureUpdated?.Invoke(this, EventArgs.Empty);
+    }
+
+    void ResetIndex()
+    {
+        for(var i=0; i<dataList.Count; i++)
+        {
+            var card = cardMap[dataList[i]];
+            card.index = i;
         }
     }
 
@@ -110,7 +132,7 @@ public class SideCardContainer : Node
             dataList[idx] = upData;
             cardContainer.MoveChild(cardMap[upData], idx);
 
-            ResetIndex();
+            EndStructureUpdate();
         }
     }
 
@@ -125,7 +147,7 @@ public class SideCardContainer : Node
             dataList[idx] = downData;
             cardContainer.MoveChild(cardMap[downData], idx);
 
-            ResetIndex();
+            EndStructureUpdate();
         }
     }
 
@@ -137,7 +159,7 @@ public class SideCardContainer : Node
         // InsertData(new SideData(), idx);
         InsertData(new SideData(), idx + 1);
 
-        ResetIndex();
+        EndStructureUpdate();
     }
     void OnCardDeleteButtonPressed(object sender, EventArgs _)
     {
@@ -145,26 +167,12 @@ public class SideCardContainer : Node
         dataList.RemoveAt(card.index);
         cardMap.Remove(card.data);
 
+        sideDeleted?.Invoke(this, card.data);
+
         if(dataList.Count == 0)
             AddData(new SideData());
 
-        ResetIndex();
+        EndStructureUpdate();
     }
 
-    void ResetIndex()
-    {
-        /*
-        var index = 0;
-        foreach(var data in dataList)
-        {
-            card.index = index;
-            index++;
-        }
-        */
-        for(var i=0; i<dataList.Count; i++)
-        {
-            var card = cardMap[dataList[i]];
-            card.index = i;
-        }
-    }
 }

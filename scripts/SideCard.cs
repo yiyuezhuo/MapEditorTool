@@ -16,20 +16,20 @@ public class SideCard : VBoxContainer
     [Export] NodePath downButtonPath;
     [Export] NodePath addButtonPath;
     [Export] NodePath deleteButtonPath;
-    [Export] NodePath idLineEditPath;
-    [Export] NodePath nameLineEditPath;
+    [Export] NodePath idLineEditRowPath;
+    [Export] NodePath nameLineEditRowPath;
     [Export] NodePath colorPickerButtonPath;
 
     Label indexLabel;
-    LineEdit idLineEdit;
-    LineEdit nameLineEdit;
+    LineEditRow idLineEditRow;
+    LineEditRow nameLineEditRow;
     ColorPickerButton colorPickerButton;
 
     SideData _data;
     public SideData data
     {
         get => _data;
-        set
+        set // BindData 
         {
             if(_data == value)
                 return;
@@ -37,7 +37,6 @@ public class SideCard : VBoxContainer
             SyncDataToUI();
         }
     }
-
 
     int _index;
     public int index
@@ -57,6 +56,10 @@ public class SideCard : VBoxContainer
     public event EventHandler addButtonPressed;
     public event EventHandler deleteButtonPressed;
 
+    public event EventHandler<string> idChanged;
+    public event EventHandler<string> nameChanged;
+    public event EventHandler<Color> colorChanged;
+
     public override void _Ready()
     {
         indexLabel = (Label)GetNode(indexLabelPath);
@@ -66,15 +69,41 @@ public class SideCard : VBoxContainer
         ((Button)GetNode(addButtonPath)).Connect("pressed", this, nameof(OnAddButtonPressed));
         ((Button)GetNode(deleteButtonPath)).Connect("pressed", this, nameof(OnDeleteButtonPressed));
 
-        idLineEdit = (LineEdit)GetNode(idLineEditPath);
-        nameLineEdit = (LineEdit)GetNode(nameLineEditPath);
+        idLineEditRow = (LineEditRow)GetNode(idLineEditRowPath);
+        nameLineEditRow = (LineEditRow)GetNode(nameLineEditRowPath);
         colorPickerButton = (ColorPickerButton)GetNode(colorPickerButtonPath);
+
+        colorPickerButton.Connect("color_changed", this, nameof(OnColorPickerButtonColorChanged));
+
+        idLineEditRow.textChanged += OnIdLineEditRowTextChanged;
+        nameLineEditRow.textChanged += OnNameLineEditRowTextChanged;
+    }
+
+    void OnIdLineEditRowTextChanged(object sender, string newText)
+    {
+        data.id = newText;
+
+        idChanged?.Invoke(this, newText);
+    }
+
+    void OnNameLineEditRowTextChanged(object sender, string newText)
+    {
+        data.name = newText;
+
+        nameChanged?.Invoke(this, newText);
+    }
+
+    void OnColorPickerButtonColorChanged(Color color)
+    {
+        data.color = color;
+        
+        colorChanged?.Invoke(this, color);
     }
 
     void SyncDataToUI()
     {
-        idLineEdit.Text = data.id;
-        nameLineEdit.Text = data.name;
+        idLineEditRow.SetText(data.id);
+        nameLineEditRow.SetText(data.name);
         colorPickerButton.Color = data.color;
     }
 

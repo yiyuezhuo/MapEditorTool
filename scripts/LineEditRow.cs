@@ -8,6 +8,7 @@ public class LineEditRow : HBoxContainer
     LineEdit lineEdit;
 
     public event EventHandler<string> textChanged;
+    
     public override void _Ready()
     {
         lineEdit = (LineEdit)GetNode(lineEditPath);

@@ -40,6 +40,8 @@ public class MapData : YYZ.MapKit.MapDataCore<Region>
         }
         return retMap;
     }
+
+    public Dictionary<Color, Region> ExtractRegionMap() => areaMap;
 }
 
 public class MapEditor : Control
@@ -50,12 +52,17 @@ public class MapEditor : Control
     [Export] NodePath regionEditDialogPath;
     [Export] NodePath sideButtonPath;
 
-    MapView mapView;
-    MapShower mapShower;
     RegionInfoWindow regionInfoWindow;
     RegionEditDialog regionEditDialog;
     RegionEdit regionEdit;
     SideCardContainer sideCardContainer;
+
+    // volative UI
+    MapView mapView;
+    MapShower mapShower;
+
+    // volative state
+    Dictionary<Color, Region> regionMap; // TODO: Use a more proper object, but I don't have time to develop more in this Jam.
 
     public override void _Ready()
     {
@@ -69,7 +76,8 @@ public class MapEditor : Control
         var sideButton = (SideButton)GetNode(sideButtonPath);
         sideCardContainer = sideButton.sideCardContainer;
 
-        var sideDataList = new List<SideData>(){
+        // test placeholder
+        var sideDataList = new List<SideData>(){ 
             new SideData(){id="french", name="French", color = new Color(0,0,1)},
             new SideData(){id="alliance", name="Alliance", color = new Color(1,0,0)}
         };
@@ -77,7 +85,23 @@ public class MapEditor : Control
         regionEdit.BindSideDataList(sideDataList);
         sideCardContainer.BindData(sideDataList);
 
+        sideCardContainer.sideDataIdUpdated += regionEdit.OnSideDataIdUpdated; // TODO: sideCard or sideCardList invoke the event directly.
+        sideCardContainer.dataListStructureUpdated += regionEdit.OnSideDataListStructureUpdated;
+        sideCardContainer.sideDataColorUpdated += OnSideColorChanged;
+        sideCardContainer.sideDeleted += OnSideDeleted;
+        regionEdit.regionSideUpdated += OnRegionSideChanged;
+
         selectGeneral.Select(0);
+
+        // test mapShower
+        /*
+        foreach(var region in regionMap.Values)
+        {
+            var regionInfo = mapShower.GetAreaInfo(region);
+            regionInfo.foregroundColor = new Color(1,0,0,1);
+        }
+        mapShower.Flush(); // TODO: maybe we should let mapShower itself flush itself if in every frame change committed.
+        */
     }
 
     void OnSelectGeneralSelected(object sender, ImageData imageData)
@@ -105,9 +129,45 @@ public class MapEditor : Control
         // https://docs.godotengine.org/en/3.2/tutorials/2d/canvas_layers.html
 
         regionEdit.BindRegion(region);
+        regionEdit.PreparePopup();
 
         var rect2 = new Rect2(GetViewport().GetMousePosition(), regionEditDialog.RectSize);
         regionEditDialog.Popup_(rect2);
+    }
+
+    void OnRegionSideChanged(object sender, Region region)
+    {
+        var regionInfo = mapShower.GetAreaInfo(region);
+        if(region.side == null)
+            regionInfo.foregroundColor = new Color(1,1,1);
+        else
+            regionInfo.foregroundColor = region.side.color;
+        
+        mapShower.Flush();
+    }
+
+    void OnSideColorChanged(object sender, SideData side)
+    {
+        foreach(var region in regionMap.Values)
+            if(region.side == side)
+            {
+                var regionInfo = mapShower.GetAreaInfo(region);
+                regionInfo.foregroundColor = side.color;
+            }
+        mapShower.Flush();
+    }
+
+    void OnSideDeleted(object sender, SideData side)
+    {
+        foreach(var region in regionMap.Values)
+            if(region.side == side)
+            {
+                region.side = null;
+                var regionInfo = mapShower.GetAreaInfo(region);
+                regionInfo.foregroundColor = new Color(1,1,1);
+            }
+        
+        mapShower.Flush();
     }
 
     void CreateMapView(Image initialImage)
@@ -117,6 +177,8 @@ public class MapEditor : Control
         var backend = new ImageGodotBackend(); // trait?
         var result = PixelMapPreprocessor.Process(backend, new ImageGodotProxy(){image=initialImage});
         var mapData = new MapData(initialImage, result.areaMap);
+        
+        regionMap = mapData.ExtractRegionMap(); // TODO: Find a better place to do this.
 
         mapView = mapViewScene.Instance<MapView>();
 
