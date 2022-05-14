@@ -9,6 +9,7 @@ margin_bottom = 20.0
 text = "Edit Side"
 script = ExtResource( 2 )
 windowDialogPath = NodePath("WindowDialog")
+sideCardContainerPath = NodePath("WindowDialog/SideCardContainer")
 
 [node name="WindowDialog" type="WindowDialog" parent="."]
 margin_right = 48.0

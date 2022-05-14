@@ -3,14 +3,19 @@ using System;
 using System.Collections.Generic;
 
 
-public class SideCardContainer : VBoxContainer
+public class SideCardContainer : Node
 {
     [Export] NodePath cardContainerPath;
     [Export] PackedScene cardScene;
 
     Control cardContainer;
 
-    List<SideCard> cardList = new List<SideCard>();
+    // List<SideCard> cardList = new List<SideCard>();
+    List<SideData> dataList = new List<SideData>();
+    Dictionary<SideData, SideCard> cardMap = new Dictionary<SideData, SideCard>();
+
+    public event EventHandler dataListIdUpdated;
+    public event EventHandler dataListStructureUpdated;
 
     public override void _Ready()
     {
@@ -18,17 +23,21 @@ public class SideCardContainer : VBoxContainer
 
         Reset();
 
+        /*
         BindData(new List<SideData>(){
             new SideData(){id="french", name="French", color = new Color(0,0,1)},
             new SideData(){id="alliance", name="Alliance", color = new Color(1,0,0)}
         });
+        */
     }
 
     void Reset()
     {
         foreach(Node child in cardContainer.GetChildren()) // clear placeholder
             child.QueueFree();
-        cardList.Clear();
+        dataList.Clear();
+        cardMap.Clear();
+        // cardList.Clear();
     }
 
     SideCard CreateCard()
@@ -48,6 +57,7 @@ public class SideCardContainer : VBoxContainer
         var card = CreateCard();
         cardContainer.AddChild(card);
         card.data = data;
+        cardMap[data] = card;
 
         return card;
     }
@@ -55,24 +65,38 @@ public class SideCardContainer : VBoxContainer
     void AddData(SideData data)
     {
         var card = AddCard(data);
-        card.index = cardList.Count;
-        cardList.Add(card);
+        card.index = dataList.Count;
+        dataList.Add(data);
+        // cardMap[data] = card;
+        // cardList.Add(card);
     }
 
     void InsertData(SideData data, int index)
     {
         var card = AddCard(data);
         card.index = index;
-        cardList.Insert(index, card);
+        dataList.Insert(index, data);
+        // cardMap[data] = card;
+        // cardList.Insert(index, card);
         cardContainer.MoveChild(card, index);
 
         ResetIndex();
     }
 
     public void BindData(List<SideData> dataList)
-    {
-        foreach(var data in dataList)
-            AddData(data);
+    { 
+        this.dataList = dataList;
+        cardMap.Clear();
+
+        foreach(Node child in cardContainer.GetChildren()) // clear placeholder
+            child.QueueFree();
+        for(var i=0; i<dataList.Count; i++)
+        {
+            var data = dataList[i];
+            var card = AddCard(data);
+            card.index = i;
+            // cardMap[data] = card;
+        }
     }
 
     void OnCardUpButtonPressed(object sender, EventArgs _)
@@ -81,10 +105,10 @@ public class SideCardContainer : VBoxContainer
 
         if(idx >= 1)
         {
-            var upCard = cardList[idx - 1];
-            cardList[idx - 1] = cardList[idx];
-            cardList[idx] = upCard;
-            cardContainer.MoveChild(upCard, idx);
+            var upData = dataList[idx - 1];
+            dataList[idx - 1] = dataList[idx];
+            dataList[idx] = upData;
+            cardContainer.MoveChild(cardMap[upData], idx);
 
             ResetIndex();
         }
@@ -94,12 +118,12 @@ public class SideCardContainer : VBoxContainer
     {
         var idx = ((SideCard)sender).index;
 
-        if(idx <= cardList.Count-2)
+        if(idx <= dataList.Count-2)
         {
-            var downCard = cardList[idx + 1];
-            cardList[idx + 1] = cardList[idx];
-            cardList[idx] = downCard;
-            cardContainer.MoveChild(downCard, idx);
+            var downData = dataList[idx + 1];
+            dataList[idx + 1] = dataList[idx];
+            dataList[idx] = downData;
+            cardContainer.MoveChild(cardMap[downData], idx);
 
             ResetIndex();
         }
@@ -110,16 +134,18 @@ public class SideCardContainer : VBoxContainer
         GD.Print("OnCardAddButtonPressed");
         var idx = ((SideCard)sender).index;
 
-        InsertData(new SideData(), idx);
+        // InsertData(new SideData(), idx);
+        InsertData(new SideData(), idx + 1);
 
         ResetIndex();
     }
     void OnCardDeleteButtonPressed(object sender, EventArgs _)
     {
         var card = (SideCard)sender;
-        cardList.RemoveAt(card.index);
+        dataList.RemoveAt(card.index);
+        cardMap.Remove(card.data);
 
-        if(cardList.Count == 0)
+        if(dataList.Count == 0)
             AddData(new SideData());
 
         ResetIndex();
@@ -127,11 +153,18 @@ public class SideCardContainer : VBoxContainer
 
     void ResetIndex()
     {
+        /*
         var index = 0;
-        foreach(var card in cardList)
+        foreach(var data in dataList)
         {
             card.index = index;
             index++;
+        }
+        */
+        for(var i=0; i<dataList.Count; i++)
+        {
+            var card = cardMap[dataList[i]];
+            card.index = i;
         }
     }
 }

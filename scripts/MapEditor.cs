@@ -48,13 +48,14 @@ public class MapEditor : Control
     [Export] NodePath selectGeneralPath;
     [Export] NodePath regionInfoWindowPath;
     [Export] NodePath regionEditDialogPath;
+    [Export] NodePath sideButtonPath;
 
     MapView mapView;
     MapShower mapShower;
     RegionInfoWindow regionInfoWindow;
     RegionEditDialog regionEditDialog;
     RegionEdit regionEdit;
-
+    SideCardContainer sideCardContainer;
 
     public override void _Ready()
     {
@@ -64,6 +65,17 @@ public class MapEditor : Control
         regionInfoWindow = (RegionInfoWindow)GetNode(regionInfoWindowPath);
         regionEditDialog = (RegionEditDialog)GetNode(regionEditDialogPath);
         regionEdit = regionEditDialog.regionEdit;
+
+        var sideButton = (SideButton)GetNode(sideButtonPath);
+        sideCardContainer = sideButton.sideCardContainer;
+
+        var sideDataList = new List<SideData>(){
+            new SideData(){id="french", name="French", color = new Color(0,0,1)},
+            new SideData(){id="alliance", name="Alliance", color = new Color(1,0,0)}
+        };
+
+        regionEdit.BindSideDataList(sideDataList);
+        sideCardContainer.BindData(sideDataList);
 
         selectGeneral.Select(0);
     }
@@ -92,11 +104,9 @@ public class MapEditor : Control
         // https://docs.godotengine.org/en/3.2/tutorials/2d/2d_transforms.html
         // https://docs.godotengine.org/en/3.2/tutorials/2d/canvas_layers.html
 
-        // var offset = new Vector2(mapShower.mapData.width / 2, mapShower.mapData.height / 2);
+        regionEdit.BindRegion(region);
+
         var rect2 = new Rect2(GetViewport().GetMousePosition(), regionEditDialog.RectSize);
-        // GD.Print(regionEditDialog.GetGlobalMousePosition(), rect2, regionEditDialog.GetViewport().GetMousePosition());
-        
-        // var rect2 = new Rect2(GetGlobalMousePosition(), regionEditDialog.RectSize);
         regionEditDialog.Popup_(rect2);
     }
 

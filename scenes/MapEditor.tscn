@@ -16,6 +16,7 @@ mapViewScene = ExtResource( 4 )
 selectGeneralPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/SelectGeneral")
 regionInfoWindowPath = NodePath("CanvasLayer/VBoxContainer/Panel/RegionInfoWindow")
 regionEditDialogPath = NodePath("CanvasLayer/RegionEditDialog")
+sideButtonPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/SideButton")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

@@ -129,7 +129,7 @@ margin_right = 250.0
 
 [node name="LineEdit" parent="SideRow/HBoxContainer" index="0"]
 margin_right = 120.0
-text = "Side Name"
+text = "side_id"
 
 [node name="ColorRect" parent="SideRow/HBoxContainer" index="1"]
 margin_left = 124.0

@@ -38,12 +38,6 @@ public class SideCard : VBoxContainer
         }
     }
 
-    void SyncDataToUI()
-    {
-        idLineEdit.Text = data.id;
-        nameLineEdit.Text = data.name;
-        colorPickerButton.Color = data.color;
-    }
 
     int _index;
     public int index
@@ -75,6 +69,13 @@ public class SideCard : VBoxContainer
         idLineEdit = (LineEdit)GetNode(idLineEditPath);
         nameLineEdit = (LineEdit)GetNode(nameLineEditPath);
         colorPickerButton = (ColorPickerButton)GetNode(colorPickerButtonPath);
+    }
+
+    void SyncDataToUI()
+    {
+        idLineEdit.Text = data.id;
+        nameLineEdit.Text = data.name;
+        colorPickerButton.Color = data.color;
     }
 
     void OnUpButtonPressed() => upButtonPressed?.Invoke(this, EventArgs.Empty);

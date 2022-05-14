@@ -13,7 +13,7 @@ public class RegionEdit : VBoxContainer
     LineEditRow nameRow;
 
     Region region;
-    IEnumerable<SideCard> cardIter;
+    List<SideData> sideDataList; // TODO: generalize it to Enumerable
 
     public override void _Ready()
     {
@@ -30,41 +30,65 @@ public class RegionEdit : VBoxContainer
     public void BindRegion(Region region)
     {
         this.region = region;
+
+        SyncRegionToUI();
     }
 
-    public void BindCardIter(IEnumerable<SideCard> cardIter)
+    public void BindSideDataList(List<SideData> sideDataList)
     {
-        this.cardIter = cardIter;
+        this.sideDataList = sideDataList;
+
+        SyncCardIterToUI();
     }
 
     void SyncRegionToUI()
     {
         idRow.SetText(region.id);
         nameRow.SetText(region.name);
+
+        if(region.side != null)
+        {
+            for(var i=0; i<sideDataList.Count; i++)
+                if(region.side == sideDataList[i])
+                {
+                    optionButton.Selected = i + 1;
+                    break;
+                }
+        }
+        else
+        {
+            optionButton.Selected = 0; // no side placeholder
+        }
     }
 
     void SyncCardIterToUI()
     {
         optionButton.Clear();
         optionButton.AddItem("");
-        foreach(var sideCard in cardIter)
+        foreach(var sideData in sideDataList)
         {
-            optionButton.AddItem(sideCard.data.id);
+            optionButton.AddItem(sideData.id);
         }
     }
 
     void OnOptionButtonItemSelected(int index)
     {
         GD.Print($"OnOptionButtonItemSelected: {index}");
+
+        region.side = sideDataList[index - 1];
     }
 
     void OnIdRowTextChanged(object sender, string newText)
     {
         GD.Print($"OnIdRowTextChanged: {newText}");
+
+        region.id = newText;
     }
 
     void OnNameRowTextChanged(object sender, string newText)
     {
         GD.Print($"OnNameRowTextChanged: {newText}");
+
+        region.name = newText;
     }
 }
