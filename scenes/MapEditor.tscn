@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://scenes/SideButton.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/MapEditor.cs" type="Script" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://scenes/MapView.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/SelectGeneral.tscn" type="PackedScene" id=5]
 [ext_resource path="res://scenes/RegionEditDialog.tscn" type="PackedScene" id=6]
+[ext_resource path="res://scenes/LabelModeBox.tscn" type="PackedScene" id=7]
 
 [node name="MapEditor" type="Control"]
 anchor_right = 1.0
@@ -17,6 +18,7 @@ selectGeneralPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/SelectGene
 regionInfoWindowPath = NodePath("CanvasLayer/VBoxContainer/Panel/RegionInfoWindow")
 regionEditDialogPath = NodePath("CanvasLayer/RegionEditDialog")
 sideButtonPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/SideButton")
+labelModeBoxPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/PanelContainer/LabelModeBox")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -26,24 +28,38 @@ margin_bottom = 40.0
 mouse_filter = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/VBoxContainer"]
-margin_right = 276.0
-margin_bottom = 20.0
+margin_right = 469.0
+margin_bottom = 38.0
 
 [node name="SelectGeneral" parent="CanvasLayer/VBoxContainer/HBoxContainer" instance=ExtResource( 5 )]
+margin_bottom = 38.0
 
 [node name="SideButton" parent="CanvasLayer/VBoxContainer/HBoxContainer" instance=ExtResource( 1 )]
 margin_left = 209.0
 margin_right = 276.0
+margin_bottom = 38.0
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/VBoxContainer/HBoxContainer"]
+margin_left = 280.0
+margin_right = 469.0
+margin_bottom = 38.0
+
+[node name="LabelModeBox" parent="CanvasLayer/VBoxContainer/HBoxContainer/PanelContainer" instance=ExtResource( 7 )]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 182.0
+margin_bottom = 31.0
 
 [node name="Panel" type="PanelContainer" parent="CanvasLayer/VBoxContainer"]
-margin_top = 24.0
-margin_right = 276.0
-margin_bottom = 286.0
+margin_top = 42.0
+margin_right = 264.0
+margin_bottom = 304.0
+size_flags_horizontal = 0
 
 [node name="RegionInfoWindow" parent="CanvasLayer/VBoxContainer/Panel" instance=ExtResource( 3 )]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 269.0
+margin_right = 257.0
 margin_bottom = 255.0
 
 [node name="RegionEditDialog" parent="CanvasLayer" instance=ExtResource( 6 )]

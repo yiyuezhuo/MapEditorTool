@@ -18,6 +18,8 @@ public class RegionEdit : VBoxContainer
     bool needSyncSideDataListToUI = false;
 
     public event EventHandler<Region> regionSideUpdated;
+    public event EventHandler<Region> regionIdUpdated;
+    public event EventHandler<Region> regionNameUpdated;
 
     public override void _Ready()
     {
@@ -111,6 +113,8 @@ public class RegionEdit : VBoxContainer
         // GD.Print($"OnIdRowTextChanged: {newText}");
 
         region.id = newText;
+
+        regionIdUpdated?.Invoke(this, region);
     }
 
     void OnNameRowTextChanged(object sender, string newText)
@@ -118,5 +122,7 @@ public class RegionEdit : VBoxContainer
         // GD.Print($"OnNameRowTextChanged: {newText}");
 
         region.name = newText;
+
+        regionNameUpdated?.Invoke(this, region);
     }
 }

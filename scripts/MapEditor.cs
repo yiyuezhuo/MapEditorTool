@@ -18,17 +18,19 @@ public class MapData : YYZ.MapKit.MapDataCore<Region>
     {
         this.areaMap = areaMap;
     }
-    public MapData(Image baseImage, Dictionary<Color, Area<Color>> areaMap) : this(baseImage, ConvertAreaMap(areaMap)) {}
+    public MapData(Image baseImage, Dictionary<Color, Area<Color>> areaMap) : this(baseImage, ConvertAreaMap(baseImage, areaMap)) {}
 
-    static Dictionary<Color, Region> ConvertAreaMap(Dictionary<Color, Area<Color>> areaMap)
+    static Dictionary<Color, Region> ConvertAreaMap(Image baseImage, Dictionary<Color, Area<Color>> areaMap)
     {
+        var offset = new Vector2(baseImage.GetWidth() / 2, baseImage.GetHeight() / 2); // Used to union world and map coordinates.
+
         var retMap = new Dictionary<Color, Region>();
         var remap = new Dictionary<Area<Color>, Region>();
         foreach(var KV in areaMap)
         {
             var a = KV.Value;
             retMap[KV.Key] = remap[KV.Value] = new Region(){
-                baseColor=a.BaseColor, remapColor=a.RemapColor, center=new Vector2(a.X, a.Y), area=a.Points,
+                baseColor=a.BaseColor, remapColor=a.RemapColor, center=new Vector2(a.X, a.Y) - offset, area=a.Points,
                 neighbors = new HashSet<Region>()
             };
         }
@@ -51,11 +53,13 @@ public class MapEditor : Control
     [Export] NodePath regionInfoWindowPath;
     [Export] NodePath regionEditDialogPath;
     [Export] NodePath sideButtonPath;
+    [Export] NodePath labelModeBoxPath;
 
     RegionInfoWindow regionInfoWindow;
     RegionEditDialog regionEditDialog;
     RegionEdit regionEdit;
     SideCardContainer sideCardContainer;
+    // LabelModeBox labelModeBox;
 
     // volative UI
     MapView mapView;
@@ -76,21 +80,34 @@ public class MapEditor : Control
         var sideButton = (SideButton)GetNode(sideButtonPath);
         sideCardContainer = sideButton.sideCardContainer;
 
+        var labelModeBox = (LabelModeBox)GetNode(labelModeBoxPath);
+
         // test placeholder
         var sideDataList = new List<SideData>(){ 
             new SideData(){id="french", name="French", color = new Color(0,0,1)},
             new SideData(){id="alliance", name="Alliance", color = new Color(1,0,0)}
         };
 
+        // bind data
         regionEdit.BindSideDataList(sideDataList);
         sideCardContainer.BindData(sideDataList);
+
+        // bind events
+        // labelModeBox.labelModeUpdated += mapView.OnLabelModeChanged; // FIXME: Value does not fall within the expected range.???
+        labelModeBox.labelModeUpdated += OnLabelModeUpdated;
 
         sideCardContainer.sideDataIdUpdated += regionEdit.OnSideDataIdUpdated; // TODO: sideCard or sideCardList invoke the event directly.
         sideCardContainer.dataListStructureUpdated += regionEdit.OnSideDataListStructureUpdated;
         sideCardContainer.sideDataColorUpdated += OnSideColorChanged;
         sideCardContainer.sideDeleted += OnSideDeleted;
-        regionEdit.regionSideUpdated += OnRegionSideChanged;
 
+        regionEdit.regionSideUpdated += OnRegionSideChanged;
+        // regionEdit.regionIdUpdated += mapView.OnRegionTextChanged; // FIXME: Value does not fall within the expected range.???
+        // regionEdit.regionNameUpdated += mapView.OnRegionTextChanged;
+        regionEdit.regionIdUpdated += OnRegionTextChanged;
+        regionEdit.regionNameUpdated += OnRegionTextChanged;
+
+        // load first premade map
         selectGeneral.Select(0);
 
         // test mapShower
@@ -102,6 +119,18 @@ public class MapEditor : Control
         }
         mapShower.Flush(); // TODO: maybe we should let mapShower itself flush itself if in every frame change committed.
         */
+    }
+
+    void OnRegionTextChanged(object sender, Region region)
+    {
+        mapView.OnRegionTextChanged(this, region);
+    }
+    
+    void OnLabelModeUpdated(object sender, LabelMode labelMode)
+    {
+        GD.Print($"OnLabelModeUpdated: {labelMode}");
+
+        mapView.OnLabelModeChanged(this, labelMode);
     }
 
     void OnSelectGeneralSelected(object sender, ImageData imageData)
@@ -200,6 +229,14 @@ public class MapEditor : Control
         mapShower.areaClickEvent += OnAreaClicked;
 
         AddChild(mapView);
+
+        // Create labels
+        mapView.CreateLabels(regionMap.Values); // container is initialized after entering the tree.
+    }
+
+    void CreateLabelLayer()
+    {
+
     }
 
     static Texture CreateRemapTexture(byte[] pngData) // debug shield

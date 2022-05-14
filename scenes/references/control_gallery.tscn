@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://icon.png" type="Texture" id=1]
-[ext_resource path="res://noto_sans_ui_regular.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://resources/noto_sans_ui_regular.ttf" type="DynamicFontData" id=2]
 
 [sub_resource type="DynamicFont" id=1]
 font_data = ExtResource( 2 )

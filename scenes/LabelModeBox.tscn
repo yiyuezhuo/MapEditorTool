@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://resources/buttongroup.tres" type="ButtonGroup" id=1]
+[ext_resource path="res://scripts/LabelModeBox.cs" type="Script" id=2]
+
+[node name="LabelModeBox" type="HBoxContainer"]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 2 )
+idCheckBoxPath = NodePath("IdCheckBox")
+nameCheckBoxPath = NodePath("NameCheckBox")
+hideCheckBoxPath = NodePath("HideCheckBox")
+
+[node name="IdCheckBox" type="CheckBox" parent="."]
+margin_right = 43.0
+margin_bottom = 40.0
+hint_tooltip = "Show ID labels on the map."
+pressed = true
+group = ExtResource( 1 )
+text = "ID"
+
+[node name="NameCheckBox" type="CheckBox" parent="."]
+margin_left = 47.0
+margin_right = 113.0
+margin_bottom = 40.0
+hint_tooltip = "Show name labels on the map."
+group = ExtResource( 1 )
+text = "Name"
+
+[node name="HideCheckBox" type="CheckBox" parent="."]
+margin_left = 117.0
+margin_right = 175.0
+margin_bottom = 40.0
+hint_tooltip = "Hide ID or name labels on the map."
+group = ExtResource( 1 )
+text = "Hide"
