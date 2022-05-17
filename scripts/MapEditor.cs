@@ -75,9 +75,20 @@ public class MapEditor : Control
     MapShower mapShower;
 
     // volatile state
-    // Dictionary<Color, Region> regionMap; // TODO: Use a more proper object, but I don't have time to develop more in this Jam.
     List<Region> regionList;
-    List<SideData> sideDataList;
+    List<SideData> _sideDataList;
+    List<SideData> sideDataList
+    {
+        get => _sideDataList;
+        set
+        {
+            _sideDataList = value;
+
+            // bind data
+            regionEdit.BindSideDataList(value);
+            sideCardContainer.BindData(value);
+        }
+    }
     Image image;
     Image remapImage;
 
@@ -104,10 +115,6 @@ public class MapEditor : Control
             new SideData(){id="french", name="French", color = new Color(0,0,1)},
             new SideData(){id="alliance", name="Alliance", color = new Color(1,0,0)}
         };
-
-        // bind data
-        regionEdit.BindSideDataList(sideDataList);
-        sideCardContainer.BindData(sideDataList);
 
         // bind events
         selectGeneral.selected += OnSelectGeneralSelected;
@@ -149,8 +156,23 @@ public class MapEditor : Control
     {
         // At this point, this.openFileGeneral is used by JSON importer exclusively (base image is loaded by another widget and its private openFileGeneral)
         var jsonString = System.Text.Encoding.UTF8.GetString(typedData.data);
-        JsonImporter.FromJsonString(jsonString, out sideDataList, out regionList);
+        JsonImporter.FromJsonString(jsonString, out var sideDataUpdateList, out var regionUpdateList);
         // GD.Print($"sideDataList.Count={sideDataList.Count}, regionList.Count={regionList.Count}");
+
+        foreach(var match in FuzzyMatcher.Match(regionList, regionUpdateList))
+        {
+            var region = match.Item1;
+            var regionUpdate = match.Item2;
+            
+            region.side = regionUpdate.side;
+            region.id = regionUpdate.id;
+            region.name = regionUpdate.name;
+            // Other attributes are derived from the map directly and should be respected.
+        }
+        mapView.SyncLabels();
+
+        sideDataList = sideDataUpdateList; // placeholder for other nuisance process.
+
         // sync UI states. (events are used for "minor" update only.)
         foreach(var region in regionList)
             {

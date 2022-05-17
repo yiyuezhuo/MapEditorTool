@@ -84,6 +84,9 @@ public static class JsonImporter
         sideDataList = new List<SideData>();
         regionList = new List<Region>();
 
+        // Those Linq may break but don't raise a exception for some reason, so there're some GD.Print to help debugging.
+        GD.Print($"FromJsonData: {sideDataList.Count}, {regionList.Count}");
+
         var _sideDataList = sideDataList = data.sides.Select(sideJsonData => new SideData(){
             id=sideJsonData.id, name=sideJsonData.name,
             color=ToColor(sideJsonData.color)

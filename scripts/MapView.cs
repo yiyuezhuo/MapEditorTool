@@ -36,7 +36,7 @@ public class MapView : YYZ.MapKit.MapView<Region>
         // SyncLabels();
     }
 
-    void SyncLabels()
+    public void SyncLabels()
     {
         switch(labelMode)
         {

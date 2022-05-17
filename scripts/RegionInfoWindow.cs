@@ -53,9 +53,6 @@ public class RegionInfoWindow : VBoxContainer
         }
         Show();
 
-        // var neighborsText = string.Join(",", region.neighbors.Select(x => x.ToColorId()));
-        // var centerText = $"{region.center.x.ToString("0.00")}, {region.center.y.ToString("0.00")}";
-
         baseColorRow.SetColor(region.baseColor);
         remapColorRow.SetColor(region.remapColor);
         colorIDRow.SetText(region.ToColorId().ToString());
