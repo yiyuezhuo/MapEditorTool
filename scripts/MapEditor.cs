@@ -6,6 +6,7 @@ using System.Linq;
 public class Region : YYZ.MapKit.Region, YYZ.MapKit.IRegion<Region>
 {
     public new HashSet<Region> neighbors{get; set;}
+    public Vector2 scale{get; set;}
 
     public string name = "";
     public string id = "";
@@ -30,7 +31,9 @@ public class MapData : YYZ.MapKit.MapDataCore<Region>
         {
             var a = KV.Value;
             retMap[KV.Key] = remap[KV.Value] = new Region(){
-                baseColor=a.BaseColor, remapColor=a.RemapColor, center=new Vector2(a.X, a.Y) - offset, area=a.Points,
+                baseColor=a.BaseColor, remapColor=a.RemapColor, 
+                center=new Vector2(a.X, a.Y) - offset, scale = new Vector2(a.SX, a.SY),
+                area=a.Points,
                 neighbors = new HashSet<Region>()
             };
         }
@@ -58,6 +61,7 @@ public class MapEditor : Control
     [Export] NodePath saveFileGeneralPath;
     [Export] NodePath openFileGeneralPath;
     [Export] NodePath importJsonButtonPath;
+    [Export] Color nullColor = new Color(1,1,1,1);
 
     RegionInfoWindow regionInfoWindow;
     RegionEditDialog regionEditDialog;
@@ -80,8 +84,7 @@ public class MapEditor : Control
     public override void _Ready()
     {
         var selectGeneral = (SelectGeneral)GetNode(selectGeneralPath);
-        selectGeneral.selected += OnSelectGeneralSelected;
-
+        
         regionInfoWindow = (RegionInfoWindow)GetNode(regionInfoWindowPath);
         regionEditDialog = (RegionEditDialog)GetNode(regionEditDialogPath);
         regionEdit = regionEditDialog.regionEdit;
@@ -107,6 +110,8 @@ public class MapEditor : Control
         sideCardContainer.BindData(sideDataList);
 
         // bind events
+        selectGeneral.selected += OnSelectGeneralSelected;
+
         // labelModeBox.labelModeUpdated += mapView.OnLabelModeChanged; // FIXME: Value does not fall within the expected range.???
         labelModeBox.labelModeUpdated += OnLabelModeUpdated;
 
@@ -121,11 +126,10 @@ public class MapEditor : Control
         regionEdit.regionIdUpdated += OnRegionTextChanged;
         regionEdit.regionNameUpdated += OnRegionTextChanged;
 
-        // saveFileGeneral.pressed += OnSaveFileGeneralPressed;
-        // saveFileGeneral.Connect("pressed", this, nameof(OnSaveFileGeneralPressed));
+        openFileGeneral.readCompleted += OnOpenFileGeneralReadCompleted;
 
         exportMenuButton.GetPopup().Connect("id_pressed", this, nameof(OnExportMenuPopupPressed));
-        // importJsonButton.Connect("pressed", openFileGeneral, )
+        importJsonButton.Connect("pressed", this, nameof(OnImportJsonButtonPressed));
 
         // load first premade map
         selectGeneral.Select(0);
@@ -139,6 +143,27 @@ public class MapEditor : Control
         }
         mapShower.Flush(); // TODO: maybe we should let mapShower itself flush itself if in every frame change committed.
         */
+    }
+
+    void OnOpenFileGeneralReadCompleted(object sender, TypedData typedData)
+    {
+        // At this point, this.openFileGeneral is used by JSON importer exclusively (base image is loaded by another widget and its private openFileGeneral)
+        var jsonString = System.Text.Encoding.UTF8.GetString(typedData.data);
+        JsonImporter.FromJsonString(jsonString, out sideDataList, out regionList);
+        // GD.Print($"sideDataList.Count={sideDataList.Count}, regionList.Count={regionList.Count}");
+        // sync UI states. (events are used for "minor" update only.)
+        foreach(var region in regionList)
+            {
+                var regionInfo = mapShower.GetAreaInfo(region);
+                regionInfo.foregroundColor = GetColorFor(region);
+            }
+        
+        mapShower.Flush();
+    }
+
+    void OnImportJsonButtonPressed()
+    {
+        var _ = openFileGeneral.StartRead(OpenFileGeneral.Accept.json);
     }
 
     void OnExportMenuPopupPressed(int idx)
@@ -241,10 +266,13 @@ public class MapEditor : Control
     void OnRegionSideChanged(object sender, Region region)
     {
         var regionInfo = mapShower.GetAreaInfo(region);
+        /*
         if(region.side == null)
             regionInfo.foregroundColor = new Color(1,1,1);
         else
             regionInfo.foregroundColor = region.side.color;
+        */
+        regionInfo.foregroundColor = GetColorFor(region);
         
         mapShower.Flush();
     }
@@ -267,11 +295,13 @@ public class MapEditor : Control
             {
                 region.side = null;
                 var regionInfo = mapShower.GetAreaInfo(region);
-                regionInfo.foregroundColor = new Color(1,1,1);
+                regionInfo.foregroundColor = nullColor;
             }
         
         mapShower.Flush();
     }
+
+    Color GetColorFor(Region region) => region.side == null ? nullColor : region.side.color;
 
     void CreateMapView(Image initialImage)
     {

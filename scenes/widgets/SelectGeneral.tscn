@@ -23,4 +23,3 @@ margin_left = 75.0
 margin_right = 205.0
 hint_tooltip = "Load a custom map file."
 text = "Select custom File"
-load = false

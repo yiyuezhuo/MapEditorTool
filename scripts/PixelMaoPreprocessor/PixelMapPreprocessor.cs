@@ -11,6 +11,8 @@ public class Area<TC>
     public int Points;
     public float X;
     public float Y;
+    public float SX; // scale of X
+    public float SY;
     public HashSet<Area<TC>> Neighbors = new HashSet<Area<TC>>();
     public bool IsEdge;
 
@@ -58,6 +60,8 @@ public static class PixelMapPreprocessor
         var areaMap = new Dictionary<TC, Area<TC>>();
 
         var remapImg = backend.CreateImage(width, height);
+
+        // first pass: create area objects and compute mean
         for(int y=0; y<height; y++)
         {
             // System.Console.WriteLine(y);
@@ -98,24 +102,36 @@ public static class PixelMapPreprocessor
 
         Console.WriteLine($"Area size: {areaMap.Count}");
 
+        // second pass: compute neighbors and variance
         for(int y=0; y<height; y++)
             for(int x=0; x<width; x++)
             {
                 var c1 = img[x, y];
+                var area = areaMap[c1];
 
                 if(y < height-1)
                 {
                     var c2 = img[x, y+1];
                     if(!c1.Equals(c2))
-                        areaMap[c1].Connect(areaMap[c2]);
+                        area.Connect(areaMap[c2]);
                 }
                 if(x < width - 1)
                 {
                     var c3 = img[x+1, y];
                     if(!c1.Equals(c3))
-                        areaMap[c1].Connect(areaMap[c3]);
+                        area.Connect(areaMap[c3]);
                 }
+                var dx = area.X - x;
+                var dy = area.Y - y;
+                area.SX += dx * dx;
+                area.SY += dy * dy;
             }
+
+        foreach(var area in areaMap.Values)
+        {
+            area.SX = (float)Math.Sqrt(area.SX / area.Points); // biased standard deviation
+            area.SY = (float)Math.Sqrt(area.SY / area.Points);
+        }
 
         return new Result<TC>(){data = remapImg.ToPngBytes(), areaMap=areaMap};
     }

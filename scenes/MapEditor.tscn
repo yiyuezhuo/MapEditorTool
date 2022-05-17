@@ -1,12 +1,12 @@
 [gd_scene load_steps=10 format=2]
 
-[ext_resource path="res://scenes/SideButton.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/widgets/SideButton.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/MapEditor.cs" type="Script" id=2]
-[ext_resource path="res://scenes/RegionInfoWindow.tscn" type="PackedScene" id=3]
-[ext_resource path="res://scenes/MapView.tscn" type="PackedScene" id=4]
-[ext_resource path="res://scenes/SelectGeneral.tscn" type="PackedScene" id=5]
-[ext_resource path="res://scenes/RegionEditDialog.tscn" type="PackedScene" id=6]
-[ext_resource path="res://scenes/LabelModeBox.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/widgets/RegionInfoWindow.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/widgets/MapView.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/widgets/SelectGeneral.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scenes/widgets/RegionEditDialog.tscn" type="PackedScene" id=6]
+[ext_resource path="res://scenes/widgets/LabelModeBox.tscn" type="PackedScene" id=7]
 [ext_resource path="res://scenes/IOGeneral/SaveFileGeneral.tscn" type="PackedScene" id=8]
 [ext_resource path="res://scenes/IOGeneral/OpenFileGeneral.tscn" type="PackedScene" id=9]
 
@@ -24,6 +24,7 @@ labelModeBoxPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/PanelContai
 exportMenuButtonPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/ExportMenuButton")
 saveFileGeneralPath = NodePath("CanvasLayer/SaveFileGeneral")
 openFileGeneralPath = NodePath("CanvasLayer/OpenFileGeneral")
+importJsonButtonPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/ImportJsonButton")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -72,14 +73,14 @@ items = [ "Export JSON", null, 0, false, false, 0, 0, null, "", false, "Export B
 [node name="Panel" type="PanelContainer" parent="CanvasLayer/VBoxContainer"]
 margin_top = 42.0
 margin_right = 264.0
-margin_bottom = 304.0
+margin_bottom = 332.0
 size_flags_horizontal = 0
 
 [node name="RegionInfoWindow" parent="CanvasLayer/VBoxContainer/Panel" instance=ExtResource( 3 )]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 257.0
-margin_bottom = 255.0
+margin_bottom = 283.0
 
 [node name="RegionEditDialog" parent="CanvasLayer" instance=ExtResource( 6 )]
 margin_right = -866.0

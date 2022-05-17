@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://scripts/SideCard.cs" type="Script" id=1]
-[ext_resource path="res://scenes/LineEditRow.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/widgets/LineEditRow.tscn" type="PackedScene" id=2]
 
 [node name="SideCard" type="VBoxContainer"]
 anchor_right = 1.0

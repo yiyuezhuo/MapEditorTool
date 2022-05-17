@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://scenes/SideCardContainer.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/widgets/SideCardContainer.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/SideButton.cs" type="Script" id=2]
 
 [node name="SideButton" type="Button"]

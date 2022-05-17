@@ -11,6 +11,7 @@ public class RegionJsonData
     public int[] remapColor;
     public int[] neighbors;
     public float[] center;
+    public float[] scale;
     public float area;
     public string name;
     public string id;
@@ -58,7 +59,7 @@ public static class JsonExporter
         {
             baseColor = Encode(region.baseColor), remapColor = Encode(region.remapColor),
             neighbors = region.neighbors.Select(r => regionMap[r]).ToArray(),
-            center = Encode(region.center), area=region.area,
+            center = Encode(region.center), scale = Encode(region.scale), area=region.area,
             name = region.name, id = region.id,
             side = region.side == null ? -1 : sideMap[region.side]
         });
@@ -88,13 +89,17 @@ public static class JsonImporter
             color=ToColor(sideJsonData.color)
         }).ToList();
 
+        GD.Print($"_sideDataList={_sideDataList.Count}");
+
         var _regionList = regionList = data.regions.Select(regionJsonData => new Region(){
             // neighbors = new HashSet<Region>(),
-            side = _sideDataList[regionJsonData.side],
+            side = regionJsonData.side == -1 ? null : _sideDataList[regionJsonData.side],
             name = regionJsonData.name, id=regionJsonData.id,
             baseColor = ToColor(regionJsonData.baseColor), remapColor = ToColor(regionJsonData.remapColor),
-            center = ToVector2(regionJsonData.center), area=regionJsonData.area
+            center = ToVector2(regionJsonData.center), scale = ToVector2(regionJsonData.scale), area=regionJsonData.area
         }).ToList();
+
+        GD.Print($"_regionList={_regionList.Count}");
 
         for(var i=0; i<regionList.Count; i++)
         {
@@ -102,6 +107,12 @@ public static class JsonImporter
             var regionJsonData = data.regions[i];
             region.neighbors = regionJsonData.neighbors.Select(idx => _regionList[idx]).ToHashSet();
         }
+    }
+
+    public static void FromJsonString(string jsonString, out List<SideData> sideDataList, out List<Region> regionList)
+    {
+        var jsonData = JsonConvert.DeserializeObject<JsonData>(jsonString);
+        FromJsonData(jsonData, out sideDataList, out regionList);
     }
 
     static Color ToColor(int[] x) => Color.Color8((byte)x[0], (byte)x[1], (byte)x[2], (byte)x[3]);
