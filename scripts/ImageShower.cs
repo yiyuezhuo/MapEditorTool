@@ -20,9 +20,10 @@ public class ImageShower : Node
 
         textureRect = (TextureRect)GetNode(textureRectPath);
 
-        // openFileGeneral.readCompleted += OnReadCompleted;
         openFileGeneral.loadCompleted += OnLoadCompleted;
-        saveFileGeneral.pressed += OnSaveFileGeneralPressed;
+        // saveFileGeneral.pressed += OnSaveFileGeneralPressed;
+        saveFileGeneral.Connect("pressed", this, nameof(OnSaveFileGeneralPressed));
+        openFileGeneral.Connect("pressed", this, nameof(OnOpenFileGeneralPressed));
     }
 
     public void OnLoadCompleted(object sender, Image image)
@@ -36,17 +37,14 @@ public class ImageShower : Node
         textureRect.Texture = tex;
     }
 
-    public void OnSaveFileGeneralPressed(object sender, EventArgs _)
+    public void OnOpenFileGeneralPressed()
+    {
+        var _ = openFileGeneral.OnPressedAsync();
+    }
+
+    public void OnSaveFileGeneralPressed()
     {
         if(image != null)
             saveFileGeneral.StartSave(image.SavePngToBuffer(), "export.png");
     }
-
-    /*
-    public void OnReadCompleted(object sender, ImageData imageData)
-    {
-        saveFileGeneral.BindData(imageData.data);
-        saveFileGeneral.defaultName = $"download.{imageData.type}";
-    }
-    */
 }

@@ -41,32 +41,6 @@ public class ConsoleUI : VBoxContainer
         DoSelect(imageData);
     }
 
-    /*
-    void OnPremadeMapOptionsItemSelected(int index)
-    {
-        GD.Print($"OnPremadeMapOptionsItemSelected: {index}");
-
-        var pathVec = new string[]{ // TODO: hard code right now
-            "res://textures/Généralités.png",
-            "res://textures/Japan.png",
-            "res://textures/TokyoBaseTex.png",
-        };
-        var path = pathVec[index];
-
-        var image = (Image)GD.Load(path);
-        var data = image.SavePngToBuffer(); // TODO: Is there way to "import" raw binary data? Godot import system is such a garbage.
-
-        DoSelect(new ImageData(){data=data, type="png"});
-    }
-
-    void OnCustomReadCompleted(object sender, ImageData imageData)
-    {
-        GD.Print("OnCustomReadCompleted");
-
-        DoSelect(imageData);
-    }
-    */
-
     void DoSelect(ImageData imageData)
     {
         var image = ImageGodotBackend.Decode(imageData.data, imageData.type);

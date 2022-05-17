@@ -301,8 +301,8 @@ public class MapShower<TArea> : Sprite where  TArea : IArea
     public void OnClick(Vector2 pos)
     {
         var areaSelected = GetAreaFromPos(pos);
-
-        areaClickEvent?.Invoke(this, areaSelected);
+        if(areaSelected != null)
+            areaClickEvent?.Invoke(this, areaSelected);
     }
 
     TArea GetAreaFromPos(Vector2 pos)

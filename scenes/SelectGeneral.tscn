@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://scenes/IOGeneral/OpenFileGeneral.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/IOGeneral/OpenFileButton.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/SelectGeneral.cs" type="Script" id=2]
 
 [node name="SelectGeneral" type="HBoxContainer"]
@@ -8,7 +8,7 @@ margin_right = 205.0
 margin_bottom = 20.0
 script = ExtResource( 2 )
 premadeMapOptionsPath = NodePath("PremadeMapOptions")
-openFileGeneralPath = NodePath("OpenFileGeneral")
+openFileGeneralPath = NodePath("OpenFileButton")
 
 [node name="PremadeMapOptions" type="OptionButton" parent="."]
 margin_right = 71.0
@@ -18,7 +18,7 @@ text = "France"
 items = [ "France", null, false, 0, null, "Japan", null, false, 1, null, "Tokyo", null, false, 2, null ]
 selected = 0
 
-[node name="OpenFileGeneral" parent="." instance=ExtResource( 1 )]
+[node name="OpenFileButton" parent="." instance=ExtResource( 1 )]
 margin_left = 75.0
 margin_right = 205.0
 hint_tooltip = "Load a custom map file."

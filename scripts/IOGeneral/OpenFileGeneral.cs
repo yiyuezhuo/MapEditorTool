@@ -7,16 +7,17 @@ public class OpenFileGeneral : IOFileGeneral
     
     [Export] bool load = true;
 
-
     TaskCompletionSource<ImageData> tcs = null;
 
     public event EventHandler<ImageData> readCompleted;
     public event EventHandler<Image> loadCompleted;
 
+    /*
     public override void _Ready()
     {
         base._Ready();
     }
+    */
 
     async Task<ImageData> GetImageData()
     {
@@ -35,12 +36,14 @@ public class OpenFileGeneral : IOFileGeneral
         return imageData; // type = "jpg", "png", ...
     }
 
+    /*
     protected override void OnPressed()
     {
         var _ = OnPressedAsync(); // suppress a warning and an error of "Attempted to convert an unmarshallable managed type to Variant. Name: 'Task`1' Encoding: 21."
     }
+    */
 
-    async Task OnPressedAsync()
+    public async Task OnPressedAsync()
     {
         GD.Print("OnPressed");
 

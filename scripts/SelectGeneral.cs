@@ -17,7 +17,14 @@ public class SelectGeneral : HBoxContainer
         openFileGeneral = (OpenFileGeneral)GetNode(openFileGeneralPath);
 
         premadeMapOptions.Connect("item_selected", this, nameof(OnPremadeMapOptionsItemSelected));
+        openFileGeneral.Connect("pressed", this, nameof(OnOpenFileGeneralPressed));
+
         openFileGeneral.readCompleted += OnCustomReadCompleted;
+    }
+
+    void OnOpenFileGeneralPressed()
+    {
+        var _ = openFileGeneral.OnPressedAsync();
     }
 
     void OnPremadeMapOptionsItemSelected(int index)

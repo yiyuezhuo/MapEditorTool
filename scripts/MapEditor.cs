@@ -53,21 +53,26 @@ public class MapEditor : Control
     [Export] NodePath regionEditDialogPath;
     [Export] NodePath sideButtonPath;
     [Export] NodePath labelModeBoxPath;
+    [Export] NodePath exportMenuButtonPath;
     [Export] NodePath saveFileGeneralPath;
+    [Export] NodePath openFileGeneralPath;
 
     RegionInfoWindow regionInfoWindow;
     RegionEditDialog regionEditDialog;
     RegionEdit regionEdit;
     SideCardContainer sideCardContainer;
     SaveFileGeneral saveFileGeneral;
+    OpenFileGeneral openFileGeneral;
 
-    // volative UI
+    // volatile UI
     MapView mapView;
     MapShower mapShower;
 
-    // volative state
+    // volatile state
     Dictionary<Color, Region> regionMap; // TODO: Use a more proper object, but I don't have time to develop more in this Jam.
     List<SideData> sideDataList;
+    Image image;
+    Image remapImage;
 
     public override void _Ready()
     {
@@ -83,6 +88,9 @@ public class MapEditor : Control
 
         var labelModeBox = (LabelModeBox)GetNode(labelModeBoxPath);
         saveFileGeneral = (SaveFileGeneral)GetNode(saveFileGeneralPath);
+        openFileGeneral = (OpenFileGeneral)GetNode(openFileGeneralPath);
+
+        var exportMenuButton = (MenuButton)GetNode(exportMenuButtonPath);
 
         // test placeholder
         sideDataList = new List<SideData>(){ 
@@ -109,7 +117,10 @@ public class MapEditor : Control
         regionEdit.regionIdUpdated += OnRegionTextChanged;
         regionEdit.regionNameUpdated += OnRegionTextChanged;
 
-        saveFileGeneral.pressed += OnSaveFileGeneralPressed;
+        // saveFileGeneral.pressed += OnSaveFileGeneralPressed;
+        // saveFileGeneral.Connect("pressed", this, nameof(OnSaveFileGeneralPressed));
+
+        exportMenuButton.GetPopup().Connect("id_pressed", this, nameof(OnExportMenuPopupPressed));
 
         // load first premade map
         selectGeneral.Select(0);
@@ -125,12 +136,55 @@ public class MapEditor : Control
         */
     }
 
-    void OnSaveFileGeneralPressed(object sender, EventArgs _)
+    void OnExportMenuPopupPressed(int idx)
+    {
+        // Layout:
+        // Export JSON
+        // Export Base Texture
+        // Export RemapTexture
+        GD.Print($"OnExportMenuPopupPressed: {idx}");
+        switch(idx)
+        {
+            case 0: // Export JSON
+                ExportJSON();
+                break;
+            case 1: // Export Base Texture
+                ExportBaseTexture();
+                break;
+            case 2: // Export RemapTexture
+                ExportRemapTexture();
+                break;
+        }
+    }
+
+    void ExportJSON()
     {
         var jsonString = JsonExporter.ToString(sideDataList, regionMap.Values);
         var name = "mapdata.json";
         var data = System.Text.Encoding.UTF8.GetBytes(jsonString);
         saveFileGeneral.StartSave(data, name);
+    }
+
+    void ExportBaseTexture()
+    {
+        /*
+        if(image == null)
+            return;
+        */
+
+        var data = image.SavePngToBuffer();
+        saveFileGeneral.StartSave(data, "base_texture.png");
+    }
+
+    void ExportRemapTexture()
+    {
+        /*
+        if(remapImage == null)
+            return;
+        */
+        
+        var data = remapImage.SavePngToBuffer();
+        saveFileGeneral.StartSave(data, "remap_texture.png");
     }
 
     void OnRegionTextChanged(object sender, Region region)
@@ -153,7 +207,7 @@ public class MapEditor : Control
             mapView = null;
         }
 
-        var image = ImageGodotBackend.Decode(imageData.data, imageData.type);
+        image = ImageGodotBackend.Decode(imageData.data, imageData.type);
         image.Lock();
         CreateMapView(image);
     }
@@ -249,9 +303,9 @@ public class MapEditor : Control
         mapView.CreateLabels(regionMap.Values); // container is initialized after entering the tree.
     }
 
-    static Texture CreateRemapTexture(byte[] pngData) // debug shield
+    Texture CreateRemapTexture(byte[] pngData) // debug shield
     {
-        var remapImage = new Image();
+        remapImage = new Image();
         remapImage.LoadPngFromBuffer(pngData);
         var remapTexture = new ImageTexture();
         remapTexture.CreateFromImage(remapImage, 0);

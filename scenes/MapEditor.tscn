@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scenes/SideButton.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/MapEditor.cs" type="Script" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://scenes/RegionEditDialog.tscn" type="PackedScene" id=6]
 [ext_resource path="res://scenes/LabelModeBox.tscn" type="PackedScene" id=7]
 [ext_resource path="res://scenes/IOGeneral/SaveFileGeneral.tscn" type="PackedScene" id=8]
+[ext_resource path="res://scenes/IOGeneral/OpenFileGeneral.tscn" type="PackedScene" id=9]
 
 [node name="MapEditor" type="Control"]
 anchor_right = 1.0
@@ -20,7 +21,9 @@ regionInfoWindowPath = NodePath("CanvasLayer/VBoxContainer/Panel/RegionInfoWindo
 regionEditDialogPath = NodePath("CanvasLayer/RegionEditDialog")
 sideButtonPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/SideButton")
 labelModeBoxPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/PanelContainer/LabelModeBox")
-saveFileGeneralPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/SaveFileGeneral")
+exportMenuButtonPath = NodePath("CanvasLayer/VBoxContainer/HBoxContainer/ExportMenuButton")
+saveFileGeneralPath = NodePath("CanvasLayer/SaveFileGeneral")
+openFileGeneralPath = NodePath("CanvasLayer/OpenFileGeneral")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -52,12 +55,13 @@ margin_top = 7.0
 margin_right = 182.0
 margin_bottom = 31.0
 
-[node name="SaveFileGeneral" parent="CanvasLayer/VBoxContainer/HBoxContainer" instance=ExtResource( 8 )]
+[node name="ExportMenuButton" type="MenuButton" parent="CanvasLayer/VBoxContainer/HBoxContainer"]
 margin_left = 473.0
 margin_right = 525.0
 margin_bottom = 38.0
-hint_tooltip = "Export map data as json file."
 text = "Export"
+flat = false
+items = [ "Export JSON", null, 0, false, false, 0, 0, null, "", false, "Export Base Texture", null, 0, false, false, 1, 0, null, "", false, "Export Remap Texture", null, 0, false, false, 2, 0, null, "", false ]
 
 [node name="Panel" type="PanelContainer" parent="CanvasLayer/VBoxContainer"]
 margin_top = 42.0
@@ -74,3 +78,7 @@ margin_bottom = 255.0
 [node name="RegionEditDialog" parent="CanvasLayer" instance=ExtResource( 6 )]
 margin_right = -866.0
 margin_bottom = -512.0
+
+[node name="OpenFileGeneral" parent="CanvasLayer" instance=ExtResource( 9 )]
+
+[node name="SaveFileGeneral" parent="CanvasLayer" instance=ExtResource( 8 )]

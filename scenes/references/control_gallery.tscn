@@ -356,9 +356,6 @@ margin_top = 10.0
 margin_right = -10.0
 margin_bottom = -10.0
 custom_constants/separation = 10
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Title" type="Label" parent="MainPanel/HSplitContainer/VSplitContainer/Lists/VBoxContainer"]
 margin_right = 645.0
