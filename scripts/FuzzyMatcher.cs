@@ -14,14 +14,12 @@ public static class FuzzyMatcher
 {
     public static List<Tuple<Region, Region, float>> Match(List<Region> regionList, List<Region> regionUpdateList)
     {
-        // var distMat = new float[regionList.Count, regionUpdateList.Count];
         var tupleList = new List<Tuple<Region, Region, float>>();
         foreach(var region in regionList)
             foreach(var regionUpdate in regionUpdateList)
             {
                 var centerDelta = region.center - regionUpdate.center;
                 var scaleDelta = region.scale - regionUpdate.scale;
-                // distMat[i, j] = Math.Abs(centerDelta.x) + Math.Abs(centerDelta.y) + Math.Abs(scaleDelta.x) + Math.Abs(scaleDelta.y);
                 var dist = Math.Abs(centerDelta.x) + Math.Abs(centerDelta.y) + Math.Abs(scaleDelta.x) + Math.Abs(scaleDelta.y);
 
                 tupleList.Add(new Tuple<Region, Region, float>(region, regionUpdate, dist));

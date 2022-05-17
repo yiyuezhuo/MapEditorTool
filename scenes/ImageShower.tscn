@@ -20,6 +20,9 @@ margin_bottom = 20.0
 margin_right = 86.0
 text = "Load Image"
 
+[node name="FileDialog" parent="TopBar/OpenFileButton" index="0"]
+filters = PoolStringArray( "*.png", "*.jpg", "*.webp" )
+
 [node name="SaveFileButton" parent="TopBar" instance=ExtResource( 3 )]
 margin_left = 90.0
 margin_right = 175.0
@@ -29,3 +32,5 @@ text = "Save Image"
 margin_top = 24.0
 margin_right = 1024.0
 margin_bottom = 24.0
+
+[editable path="TopBar/OpenFileButton"]
