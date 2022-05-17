@@ -4,16 +4,6 @@ using System;
 public class SaveFileGeneral : IOFileGeneral
 {
     byte[] data;
-    /*
-    public event EventHandler pressed;
-
-    protected override void OnPressed()
-    {
-        GD.Print("OnPressed");
-
-        pressed?.Invoke(this, EventArgs.Empty);
-    }
-    */
 
     /// <summary>
     /// name is download name for HTML5 version or initial name in desktop FileDialog

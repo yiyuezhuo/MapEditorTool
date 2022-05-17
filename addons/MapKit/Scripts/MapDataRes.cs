@@ -136,8 +136,6 @@ public class MapData<TData, TRegion> : MapDataCore<TRegion> where TData : IRegio
         var regionJsonString = Utils.ReadText(path);
         areaMap = regionMapFactory.Get(regionJsonString);
     }
-
-    // public IEnumerable<TRegion> GetAllAreas() => areaMap.Values;
 }
 
 // Reference implementations

@@ -4,70 +4,63 @@ using System.Threading.Tasks;
 
 public class OpenFileGeneral : IOFileGeneral
 {
-    
-    // [Export] bool load = true;
-
     TaskCompletionSource<TypedData> tcs = null;
 
-    public static class Accept
+    public class Accept
     {
-        public static string image = "image/png, image/jpeg, image/webp";
-        public static string json = "application/JSON";
+        // public string image = "image/png, image/jpeg, image/webp";
+        // public string json = "application/JSON";
+
+        public abstract class Filter
+        {
+            public abstract string ToHTML5();
+            public abstract string[] ToFileDialog();
+        }
+
+        public class Image : Filter
+        {
+            public override string ToHTML5() => "image/png, image/jpeg, image/webp";
+            public override string[] ToFileDialog() => new string[]{"*.png", "*.jpg", "*.webp"};
+        }
+
+        public class Json : Filter
+        {
+            public override string ToHTML5() => "application/JSON";
+            public override string[] ToFileDialog() => new string[]{"*.json"};
+        }
+
+        public static Image image = new Image();
+        public static Json json = new Json();
     }
 
     public event EventHandler<TypedData> readCompleted;
-    // public event EventHandler<Image> loadCompleted;
 
-    /*
-    public override void _Ready()
-    {
-        base._Ready();
-    }
-    */
-
-    async Task<TypedData> GetTypedData(string accept)
+    async Task<TypedData> GetTypedData(Accept.Filter accept)
     {
         TypedData imageData;
         if(IsHTML5())
         {
-            imageData = await html5file.ReadDataAsync(accept); // type = "image/jpg", "image/png", ..., "text/json"
+            imageData = await html5file.ReadDataAsync(accept.ToHTML5()); // type = "image/jpg", "image/png", ..., "text/json"
             imageData.type = imageData.type.Replace("image/", "");
         }
         else
         {
             tcs = new TaskCompletionSource<TypedData>();
+            fileDialog.Filters = accept.ToFileDialog();
             fileDialog.Popup_();
             imageData = await tcs.Task; // type = "jpg", "png", ...
         }
         return imageData; // type = "jpg", "png", ...
     }
 
-    public async Task StartRead(string accept)
+    public async Task StartRead(Accept.Filter accept)
     {
         GD.Print("OnPressed");
 
         var imageData = await GetTypedData(accept);
 
         readCompleted?.Invoke(this, imageData);
-
-        /*
-        if(!load)
-            return;
-
-        var image = ImageGodotBackend.Decode(imageData.data, imageData.type);
-
-        loadCompleted?.Invoke(this, image);
-        */
     }
-
-    /*
-    public async Task ReadJsonAsync()
-    {
-        GD.Print("ReadJsonAsync")
-
-        var jsonData = await GetJson
-    }
-    */
 
     protected override void OnFileDialogFileSelected(string path)
     {

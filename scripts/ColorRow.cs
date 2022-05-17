@@ -22,6 +22,4 @@ public class ColorRow : HBoxContainer
         lineEdit.Text = text;
         colorRect.Color = color;
     }
-
-    // static int F2I(float x) => ImageGodotBackend.F2I(x);
 }

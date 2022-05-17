@@ -88,9 +88,4 @@ margin_bottom = -512.0
 
 [node name="OpenFileGeneral" parent="CanvasLayer" instance=ExtResource( 9 )]
 
-[node name="FileDialog" parent="CanvasLayer/OpenFileGeneral" index="0"]
-filters = PoolStringArray( "*.json" )
-
 [node name="SaveFileGeneral" parent="CanvasLayer" instance=ExtResource( 8 )]
-
-[editable path="CanvasLayer/OpenFileGeneral"]

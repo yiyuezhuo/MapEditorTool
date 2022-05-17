@@ -50,11 +50,5 @@ func load_handler(_args):
 func read_data(accept : String):
 	js_interface.upload(js_callback, accept)
 
-# func read_image():
-# 	js_interface.upload(js_callback, "image/png, image/jpeg, image/webp")
-# 
-# func read_json():
-# 	js_interface.upload(js_callback, "application/JSON")
-
 func save_data(buffer:PoolByteArray, fileName:String)->void:
 	JavaScript.download_buffer(buffer, fileName)

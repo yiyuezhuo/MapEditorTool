@@ -64,10 +64,8 @@ public static class PixelMapPreprocessor
         // first pass: create area objects and compute mean
         for(int y=0; y<height; y++)
         {
-            // System.Console.WriteLine(y);
             for(int x=0; x<width; x++)
             {
-                // System.Console.WriteLine(x);
                 // var baseColor = img.GetPixel(x, y);
                 var baseColor = img[x, y]; // TODO: https://docs.sixlabors.com/articles/imagesharp/pixelbuffers.html
                 Area<TC> area; // C# 8 requires Nullable reference type
@@ -158,8 +156,6 @@ public static class PixelMapPreprocessor
         public float Y;
         public List<int[]> Neighbors;
         public bool IsEdge;
-
-        // static int[] EncodeColor(TC c) => new int[]{c.R, c.G, c.B, c.A};
 
         public AreaReduced(IImageBackend<TC> backend, Area<TC> area)
         {

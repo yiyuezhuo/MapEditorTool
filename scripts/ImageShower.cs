@@ -21,7 +21,6 @@ public class ImageShower : Node
         textureRect = (TextureRect)GetNode(textureRectPath);
 
         openFileGeneral.readCompleted += OnReadCompleted;
-        // saveFileGeneral.pressed += OnSaveFileGeneralPressed;
         saveFileGeneral.Connect("pressed", this, nameof(OnSaveFileGeneralPressed));
         openFileGeneral.Connect("pressed", this, nameof(OnOpenFileGeneralPressed));
     }

@@ -21,9 +21,6 @@ margin_right = 74.0
 size_flags_horizontal = 0
 text = "Open File"
 
-[node name="FileDialog" parent="HBoxContainer/OpenFileButton" index="0"]
-filters = PoolStringArray( "*.json" )
-
 [node name="SaveFileButton" parent="HBoxContainer" instance=ExtResource( 2 )]
 margin_left = 78.0
 margin_right = 146.0
@@ -34,5 +31,3 @@ margin_top = 24.0
 margin_right = 500.0
 margin_bottom = 524.0
 rect_min_size = Vector2( 500, 500 )
-
-[editable path="HBoxContainer/OpenFileButton"]
