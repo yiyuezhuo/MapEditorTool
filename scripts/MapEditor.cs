@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Region : YYZ.MapKit.Region, YYZ.MapKit.IRegion<Region>
 {
@@ -56,6 +57,7 @@ public class MapEditor : Control
     [Export] NodePath exportMenuButtonPath;
     [Export] NodePath saveFileGeneralPath;
     [Export] NodePath openFileGeneralPath;
+    [Export] NodePath importJsonButtonPath;
 
     RegionInfoWindow regionInfoWindow;
     RegionEditDialog regionEditDialog;
@@ -69,7 +71,8 @@ public class MapEditor : Control
     MapShower mapShower;
 
     // volatile state
-    Dictionary<Color, Region> regionMap; // TODO: Use a more proper object, but I don't have time to develop more in this Jam.
+    // Dictionary<Color, Region> regionMap; // TODO: Use a more proper object, but I don't have time to develop more in this Jam.
+    List<Region> regionList;
     List<SideData> sideDataList;
     Image image;
     Image remapImage;
@@ -91,6 +94,7 @@ public class MapEditor : Control
         openFileGeneral = (OpenFileGeneral)GetNode(openFileGeneralPath);
 
         var exportMenuButton = (MenuButton)GetNode(exportMenuButtonPath);
+        var importJsonButton = (Button)GetNode(importJsonButtonPath);
 
         // test placeholder
         sideDataList = new List<SideData>(){ 
@@ -121,6 +125,7 @@ public class MapEditor : Control
         // saveFileGeneral.Connect("pressed", this, nameof(OnSaveFileGeneralPressed));
 
         exportMenuButton.GetPopup().Connect("id_pressed", this, nameof(OnExportMenuPopupPressed));
+        // importJsonButton.Connect("pressed", openFileGeneral, )
 
         // load first premade map
         selectGeneral.Select(0);
@@ -159,7 +164,7 @@ public class MapEditor : Control
 
     void ExportJSON()
     {
-        var jsonString = JsonExporter.ToString(sideDataList, regionMap.Values);
+        var jsonString = JsonExporter.ToString(sideDataList, regionList);
         var name = "mapdata.json";
         var data = System.Text.Encoding.UTF8.GetBytes(jsonString);
         saveFileGeneral.StartSave(data, name);
@@ -199,7 +204,7 @@ public class MapEditor : Control
         mapView.OnLabelModeChanged(this, labelMode);
     }
 
-    void OnSelectGeneralSelected(object sender, ImageData imageData)
+    void OnSelectGeneralSelected(object sender, TypedData imageData)
     {
         if(mapView != null)
         {
@@ -246,7 +251,7 @@ public class MapEditor : Control
 
     void OnSideColorChanged(object sender, SideData side)
     {
-        foreach(var region in regionMap.Values)
+        foreach(var region in regionList)
             if(region.side == side)
             {
                 var regionInfo = mapShower.GetAreaInfo(region);
@@ -257,7 +262,7 @@ public class MapEditor : Control
 
     void OnSideDeleted(object sender, SideData side)
     {
-        foreach(var region in regionMap.Values)
+        foreach(var region in regionList)
             if(region.side == side)
             {
                 region.side = null;
@@ -276,13 +281,13 @@ public class MapEditor : Control
         var result = PixelMapPreprocessor.Process(backend, new ImageGodotProxy(){image=initialImage});
         var mapData = new MapData(initialImage, result.areaMap);
         
-        regionMap = mapData.ExtractRegionMap(); // TODO: Find a better place to do this.
+        regionList = mapData.ExtractRegionMap().Values.ToList(); // TODO: Find a better place to do this.
 
         mapView = mapViewScene.Instance<MapView>();
 
         var baseTexture = new ImageTexture();
         baseTexture.CreateFromImage(initialImage, 0);
-        // FIXME: disable fitlers
+        // FIXME: disable filters
 
         mapShower = (MapShower)mapView.GetNode(mapView.mapShowerPath);
         mapShower.mapData = mapData;
@@ -300,7 +305,7 @@ public class MapEditor : Control
         AddChild(mapView);
 
         // Create labels
-        mapView.CreateLabels(regionMap.Values); // container is initialized after entering the tree.
+        mapView.CreateLabels(regionList); // container is initialized after entering the tree.
     }
 
     Texture CreateRemapTexture(byte[] pngData) // debug shield

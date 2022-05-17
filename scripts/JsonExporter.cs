@@ -75,3 +75,35 @@ public static class JsonExporter
     public static int[] Encode(Color color) => ImageGodotBackend.EncodeColor(color);
     public static float[] Encode(Vector2 x) => new float[]{x.x, x.y};
 }
+
+public static class JsonImporter
+{
+    public static void FromJsonData(JsonData data, out List<SideData> sideDataList, out List<Region> regionList)
+    {
+        sideDataList = new List<SideData>();
+        regionList = new List<Region>();
+
+        var _sideDataList = sideDataList = data.sides.Select(sideJsonData => new SideData(){
+            id=sideJsonData.id, name=sideJsonData.name,
+            color=ToColor(sideJsonData.color)
+        }).ToList();
+
+        var _regionList = regionList = data.regions.Select(regionJsonData => new Region(){
+            // neighbors = new HashSet<Region>(),
+            side = _sideDataList[regionJsonData.side],
+            name = regionJsonData.name, id=regionJsonData.id,
+            baseColor = ToColor(regionJsonData.baseColor), remapColor = ToColor(regionJsonData.remapColor),
+            center = ToVector2(regionJsonData.center), area=regionJsonData.area
+        }).ToList();
+
+        for(var i=0; i<regionList.Count; i++)
+        {
+            var region = regionList[i];
+            var regionJsonData = data.regions[i];
+            region.neighbors = regionJsonData.neighbors.Select(idx => _regionList[idx]).ToHashSet();
+        }
+    }
+
+    static Color ToColor(int[] x) => Color.Color8((byte)x[0], (byte)x[1], (byte)x[2], (byte)x[3]);
+    static Vector2 ToVector2(float[] x) => new Vector2(x[0], x[1]);
+}

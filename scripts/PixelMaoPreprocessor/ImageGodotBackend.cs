@@ -68,10 +68,11 @@ public class ImageGodotBackend : IImageBackend<Color> // Rich
 
     public Color CreateColor(byte r, byte g, byte b, byte a) => Color.Color8(r, g, b, a);
 
-    public static int F2I(float x) => (int)(x * 255); // or (int)Mathf.Round(x * 255); ?
+    // public static int F2I(float x) => (int)(x * 255); // or (int)Mathf.Round(x * 255); ?
 
-    public static int[] EncodeColor(Color c) => new int[]{F2I(c.r), F2I(c.g), F2I(c.b), F2I(c.a)};
+    // public static int[] EncodeColor(Color c) => new int[]{F2I(c.r), F2I(c.g), F2I(c.b), F2I(c.a)};
+    public static int[] EncodeColor(Color c) => new int[]{c.r8, c.g8, c.b8, c.a8};
     int[] IImageBackendWeak<Color>.EncodeColor(Color c) => EncodeColor(c);
 
-    public static string StringfyColor(Color c) => $"{F2I(c.r)},{F2I(c.g)},{F2I(c.b)},{F2I(c.a)}";
+    public static string StringfyColor(Color c) => $"{c.r8},{c.g8},{c.b8},{c.a8}";
 }

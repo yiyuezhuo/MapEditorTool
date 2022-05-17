@@ -11,7 +11,7 @@ public class ConsoleUI : VBoxContainer
     TextEdit jsonOutput;
     Label messageLabel;
 
-    ImageData currentImageData;
+    TypedData currentImageData;
 
     public override void _Ready()
     {
@@ -36,12 +36,12 @@ public class ConsoleUI : VBoxContainer
 
     void Message(string s) => messageLabel.Text = s;
 
-    void OnSelectGeneralSelected(object sender, ImageData imageData)
+    void OnSelectGeneralSelected(object sender, TypedData imageData)
     {
         DoSelect(imageData);
     }
 
-    void DoSelect(ImageData imageData)
+    void DoSelect(TypedData imageData)
     {
         var image = ImageGodotBackend.Decode(imageData.data, imageData.type);
 
@@ -55,7 +55,7 @@ public class ConsoleUI : VBoxContainer
         currentImageData = imageData;
     }
 
-    async Task DoProcessAsync(ImageData imageData)
+    async Task DoProcessAsync(TypedData imageData)
     {
         var message = "Processing...";
         if(IOFileGeneral.IsHTML5())
@@ -72,10 +72,10 @@ public class ConsoleUI : VBoxContainer
         DoProcessCore(imageData);
 
         stopWatch.Stop();
-        Message($"Processing Finished. Elasped: {stopWatch.Elapsed}");
+        Message($"Processing Finished. Elapsed: {stopWatch.Elapsed}");
     }
 
-    void DoProcessCore(ImageData imageData)
+    void DoProcessCore(TypedData imageData)
     {
         // var backend = new ImageSharpBackend();
         var backend = new ImageGodotBackend(); // trait?

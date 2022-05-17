@@ -1,7 +1,7 @@
 extends Node
 
-signal read_completed(imageData, imageType)
-signal load_completed(image)
+signal read_completed(data, dataType)
+# signal load_completed(image)
 
 var js_callback = JavaScript.create_callback(self, "load_handler");
 var js_interface;
@@ -15,11 +15,14 @@ func _define_js()->void:
 	#Define JS script
 	JavaScript.eval("""
 	var _HTML5FileExchange = {};
-	_HTML5FileExchange.upload = function(gd_callback) {
+	_HTML5FileExchange.upload = function(gd_callback, accept) {
 		canceled = true;
 		var input = document.createElement('INPUT'); 
-		input.setAttribute("type", "file");
-		input.setAttribute("accept", "image/png, image/jpeg, image/webp");
+		input.setAttribute('type', 'file');
+		if(typeof(accept) !== 'undefined'){
+			input.setAttribute('accept', accept);
+		}
+		// input.setAttribute('accept', 'image/png, image/jpeg, image/webp');
 		input.click();
 		input.addEventListener('change', event => {
 			if (event.target.files.length > 0){
@@ -29,7 +32,7 @@ func _define_js()->void:
 			this.fileType = file.type;
 			// var fileName = file.name;
 			reader.readAsArrayBuffer(file);
-			reader.onloadend = (evt) => { // Since here's it's arrow function, "this" still refers to _HTML5FileExchange
+			reader.onloadend = (evt) => { // Since here's it's arrow function, 'this' still refers to _HTML5FileExchange
 				if (evt.target.readyState == FileReader.DONE) {
 					this.result = evt.target.result;
 					gd_callback(); // It's hard to retrieve value from callback argument, so it's just for notification
@@ -40,48 +43,18 @@ func _define_js()->void:
 	""", true)
 
 func load_handler(_args):
-	var imageType = js_interface.fileType;
-	var imageData = JavaScript.eval("_HTML5FileExchange.result", true) # interface doesn't work as expected for some reason
-	emit_signal("read_completed", imageData, imageType)
+	var dataType = js_interface.fileType;
+	var data = JavaScript.eval("_HTML5FileExchange.result", true) # interface doesn't work as expected for some reason
+	emit_signal("read_completed", data, dataType)
 
-func read_data():
-	js_interface.upload(js_callback)
-	
-func load_image():
-	if OS.get_name() != "HTML5" or !OS.has_feature('JavaScript'):
-		return
+func read_data(accept : String):
+	js_interface.upload(js_callback, accept)
 
-		read_data()
-
-	var imageDataType = yield(self, "read_completed")
-	var imageData = imageDataType[0]
-	var imageType = imageDataType[1]
-	
-	var image = Image.new()
-	var image_error
-	match imageType:
-		"image/png":
-			image_error = image.load_png_from_buffer(imageData)
-		"image/jpeg":
-			image_error = image.load_jpg_from_buffer(imageData)
-		"image/webp":
-			image_error = image.load_webp_from_buffer(imageData)
-		var invalidType:
-			print("Unsupported file format - %s." % invalidType)
-			return
-	
-	if image_error:
-		print("An error occurred while trying to display the image.")
-	
-	emit_signal("load_completed", image)
-
-func save_image(image:Image, fileName:String = "export.png")->void:
-	if OS.get_name() != "HTML5" or !OS.has_feature('JavaScript'):
-		return
-	
-	image.clear_mipmaps()
-	var buffer = image.save_png_to_buffer()
-	save_data(buffer, fileName)
+# func read_image():
+# 	js_interface.upload(js_callback, "image/png, image/jpeg, image/webp")
+# 
+# func read_json():
+# 	js_interface.upload(js_callback, "application/JSON")
 
 func save_data(buffer:PoolByteArray, fileName:String)->void:
 	JavaScript.download_buffer(buffer, fileName)

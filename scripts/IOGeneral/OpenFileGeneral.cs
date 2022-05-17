@@ -5,12 +5,18 @@ using System.Threading.Tasks;
 public class OpenFileGeneral : IOFileGeneral
 {
     
-    [Export] bool load = true;
+    // [Export] bool load = true;
 
-    TaskCompletionSource<ImageData> tcs = null;
+    TaskCompletionSource<TypedData> tcs = null;
 
-    public event EventHandler<ImageData> readCompleted;
-    public event EventHandler<Image> loadCompleted;
+    public static class Accept
+    {
+        public static string image = "image/png, image/jpeg, image/webp";
+        public static string json = "application/JSON";
+    }
+
+    public event EventHandler<TypedData> readCompleted;
+    // public event EventHandler<Image> loadCompleted;
 
     /*
     public override void _Ready()
@@ -19,60 +25,64 @@ public class OpenFileGeneral : IOFileGeneral
     }
     */
 
-    async Task<ImageData> GetImageData()
+    async Task<TypedData> GetTypedData(string accept)
     {
-        ImageData imageData;
+        TypedData imageData;
         if(IsHTML5())
         {
-            imageData = await html5file.LoadDataAsync(); // type = "image/jpg", "image/png", ...
+            imageData = await html5file.ReadDataAsync(accept); // type = "image/jpg", "image/png", ..., "text/json"
             imageData.type = imageData.type.Replace("image/", "");
         }
         else
         {
-            tcs = new TaskCompletionSource<ImageData>();
+            tcs = new TaskCompletionSource<TypedData>();
             fileDialog.Popup_();
             imageData = await tcs.Task; // type = "jpg", "png", ...
         }
         return imageData; // type = "jpg", "png", ...
     }
 
-    /*
-    protected override void OnPressed()
-    {
-        var _ = OnPressedAsync(); // suppress a warning and an error of "Attempted to convert an unmarshallable managed type to Variant. Name: 'Task`1' Encoding: 21."
-    }
-    */
-
-    public async Task OnPressedAsync()
+    public async Task StartRead(string accept)
     {
         GD.Print("OnPressed");
 
-        var imageData = await GetImageData();
+        var imageData = await GetTypedData(accept);
 
         readCompleted?.Invoke(this, imageData);
 
+        /*
         if(!load)
             return;
 
         var image = ImageGodotBackend.Decode(imageData.data, imageData.type);
 
         loadCompleted?.Invoke(this, image);
+        */
     }
+
+    /*
+    public async Task ReadJsonAsync()
+    {
+        GD.Print("ReadJsonAsync")
+
+        var jsonData = await GetJson
+    }
+    */
 
     protected override void OnFileDialogFileSelected(string path)
     {
         GD.Print($"OnFileDialogFileSelected: {path}");
 
-        var imageData = ReadDataFromPath(path);
-        tcs.TrySetResult(imageData);
+        var typedData = ReadDataFromPath(path);
+        tcs.TrySetResult(typedData);
     }
 
-    public static ImageData ReadDataFromPath(string path)
+    public static TypedData ReadDataFromPath(string path)
     {
         var bytes = ReadBytesFromPath(path);
         var type = System.IO.Path.GetExtension(path);
         type = type.Replace(".", ""); // Is it a solid normalization?
-        return new ImageData{data=bytes, type=type};
+        return new TypedData{data=bytes, type=type};
     }
 
     public static byte[] ReadBytesFromPath(string path)

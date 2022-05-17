@@ -20,15 +20,16 @@ public class ImageShower : Node
 
         textureRect = (TextureRect)GetNode(textureRectPath);
 
-        openFileGeneral.loadCompleted += OnLoadCompleted;
+        openFileGeneral.readCompleted += OnReadCompleted;
         // saveFileGeneral.pressed += OnSaveFileGeneralPressed;
         saveFileGeneral.Connect("pressed", this, nameof(OnSaveFileGeneralPressed));
         openFileGeneral.Connect("pressed", this, nameof(OnOpenFileGeneralPressed));
     }
 
-    public void OnLoadCompleted(object sender, Image image)
+    public void OnReadCompleted(object sender, TypedData typedData)
     {
-        GD.Print("OnLoadCompleted");
+        GD.Print("ImageShower.OnReadCompleted");
+        var image = ImageGodotBackend.Decode(typedData.data, typedData.type);
 
         this.image = image;
         
@@ -39,7 +40,7 @@ public class ImageShower : Node
 
     public void OnOpenFileGeneralPressed()
     {
-        var _ = openFileGeneral.OnPressedAsync();
+        var _ = openFileGeneral.StartRead(OpenFileGeneral.Accept.image);
     }
 
     public void OnSaveFileGeneralPressed()

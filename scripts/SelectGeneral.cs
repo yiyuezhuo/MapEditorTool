@@ -9,7 +9,7 @@ public class SelectGeneral : HBoxContainer
     OptionButton premadeMapOptions;
     OpenFileGeneral openFileGeneral;
 
-    public event EventHandler<ImageData> selected;
+    public event EventHandler<TypedData> selected;
 
     public override void _Ready()
     {
@@ -24,7 +24,7 @@ public class SelectGeneral : HBoxContainer
 
     void OnOpenFileGeneralPressed()
     {
-        var _ = openFileGeneral.OnPressedAsync();
+        var _ = openFileGeneral.StartRead(OpenFileGeneral.Accept.image);
     }
 
     void OnPremadeMapOptionsItemSelected(int index)
@@ -41,10 +41,10 @@ public class SelectGeneral : HBoxContainer
         var image = (Image)GD.Load(path);
         var data = image.SavePngToBuffer(); // TODO: Is there way to "import" raw binary data? Godot import system is such a garbage.
 
-        selected?.Invoke(this, new ImageData(){data=data, type="png"});
+        selected?.Invoke(this, new TypedData(){data=data, type="png"});
     }
 
-    void OnCustomReadCompleted(object sender, ImageData imageData)
+    void OnCustomReadCompleted(object sender, TypedData imageData)
     {
         GD.Print("OnCustomReadCompleted");
 

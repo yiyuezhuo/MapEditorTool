@@ -15,11 +15,9 @@ public abstract class IOFileGeneral : Node
 
         fileDialog.CurrentDir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile);
 
-        // Connect("pressed", this, nameof(OnPressed));
         fileDialog.Connect("file_selected", this, nameof(OnFileDialogFileSelected));
     }
 
-    // protected abstract void OnPressed();
     protected abstract void OnFileDialogFileSelected(string path);
 
     public static bool IsHTML5() => OS.GetName() == "HTML5" && OS.HasFeature("JavaScript");

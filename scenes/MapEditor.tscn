@@ -33,7 +33,7 @@ margin_bottom = 40.0
 mouse_filter = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/VBoxContainer"]
-margin_right = 525.0
+margin_right = 620.0
 margin_bottom = 38.0
 
 [node name="SelectGeneral" parent="CanvasLayer/VBoxContainer/HBoxContainer" instance=ExtResource( 5 )]
@@ -44,9 +44,15 @@ margin_left = 209.0
 margin_right = 276.0
 margin_bottom = 38.0
 
-[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/VBoxContainer/HBoxContainer"]
+[node name="ImportJsonButton" type="Button" parent="CanvasLayer/VBoxContainer/HBoxContainer"]
 margin_left = 280.0
-margin_right = 469.0
+margin_right = 371.0
+margin_bottom = 38.0
+text = "Import JSON"
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/VBoxContainer/HBoxContainer"]
+margin_left = 375.0
+margin_right = 564.0
 margin_bottom = 38.0
 
 [node name="LabelModeBox" parent="CanvasLayer/VBoxContainer/HBoxContainer/PanelContainer" instance=ExtResource( 7 )]
@@ -56,8 +62,8 @@ margin_right = 182.0
 margin_bottom = 31.0
 
 [node name="ExportMenuButton" type="MenuButton" parent="CanvasLayer/VBoxContainer/HBoxContainer"]
-margin_left = 473.0
-margin_right = 525.0
+margin_left = 568.0
+margin_right = 620.0
 margin_bottom = 38.0
 text = "Export"
 flat = false

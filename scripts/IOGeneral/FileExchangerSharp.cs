@@ -1,7 +1,7 @@
 using Godot;
 using System.Threading.Tasks;
 
-public class ImageData
+public class TypedData
 {
     public byte[] data;
     public string type;
@@ -20,18 +20,11 @@ public class FileExchangerSharp : Node
         html5file = GetNode("/root/HTML5File"); // A GDScript singleton node
     }
 
-    public async Task<Image> LoadImageAsync()
+    public async Task<TypedData> ReadDataAsync(string accept)
     {
-        html5file.Call("load_image");
-        var signalArgs = await ToSignal(html5file, "load_completed");
-        return (Image)signalArgs[0];
-    }
-
-    public async Task<ImageData> LoadDataAsync()
-    {
-        html5file.Call("read_data");
+        html5file.Call("read_data", accept);
         var signalArgs = await ToSignal(html5file, "read_completed");
-        return new ImageData(){data = (byte[])signalArgs[0], type = (string)signalArgs[1]};
+        return new TypedData(){data = (byte[])signalArgs[0], type = (string)signalArgs[1]};
     }
 
     public void SaveImage(Image image, string fileName)
