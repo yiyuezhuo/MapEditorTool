@@ -8,6 +8,9 @@
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 2 )
+openFileGeneralPath = NodePath("TopBar/OpenFileGeneral")
+saveFileGeneralPath = NodePath("TopBar/SaveFileGeneral")
+textureRectPath = NodePath("TextureRect")
 
 [node name="TopBar" type="HBoxContainer" parent="."]
 margin_right = 1024.0
@@ -19,8 +22,8 @@ text = "Load Image"
 
 [node name="SaveFileGeneral" parent="TopBar" instance=ExtResource( 3 )]
 margin_left = 90.0
-margin_right = 164.0
-text = "Save Data"
+margin_right = 175.0
+text = "Save Image"
 
 [node name="TextureRect" type="TextureRect" parent="."]
 margin_top = 24.0

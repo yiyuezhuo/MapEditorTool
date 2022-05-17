@@ -3,36 +3,30 @@ using System;
 
 public class SaveFileGeneral : IOFileGeneral
 {
-    [Export] public string defaultName = "download"; // download name or default name for FileDialog
-
     byte[] data;
-    bool neverBinded = true;
-
-    public override void _Ready()
-    {
-        base._Ready();
-    }
-
-    public void BindData(byte[] data)
-    {
-        neverBinded = false;
-        this.data = data;
-    }
+    public event EventHandler pressed;
 
     protected override void OnPressed()
     {
         GD.Print("OnPressed");
 
-        if(neverBinded)
-            return;
+        pressed?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// name is download name for HTML5 version or initial name in desktop FileDialog
+    /// </summary>
+    public void StartSave(byte[] data, string name)
+    {
+        this.data = data;
 
         if(IsHTML5())
         {
-            html5file.SaveData(data, defaultName);
+            html5file.SaveData(data, name);
         }
         else
         {
-            fileDialog.CurrentFile = defaultName;
+            fileDialog.CurrentFile = name;
             fileDialog.Popup_();
         }
     }
@@ -49,5 +43,7 @@ public class SaveFileGeneral : IOFileGeneral
         
         file.StoreBuffer(data);
         file.Close();
+
+        data = null;
     }
 }

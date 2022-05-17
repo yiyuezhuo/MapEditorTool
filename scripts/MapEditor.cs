@@ -53,13 +53,13 @@ public class MapEditor : Control
     [Export] NodePath regionEditDialogPath;
     [Export] NodePath sideButtonPath;
     [Export] NodePath labelModeBoxPath;
-    [Export] NodePath saveFileGeneralLazyPath;
+    [Export] NodePath saveFileGeneralPath;
 
     RegionInfoWindow regionInfoWindow;
     RegionEditDialog regionEditDialog;
     RegionEdit regionEdit;
     SideCardContainer sideCardContainer;
-    SaveFileGeneralLazy saveFileGeneralLazy;
+    SaveFileGeneral saveFileGeneral;
 
     // volative UI
     MapView mapView;
@@ -82,7 +82,7 @@ public class MapEditor : Control
         sideCardContainer = sideButton.sideCardContainer;
 
         var labelModeBox = (LabelModeBox)GetNode(labelModeBoxPath);
-        saveFileGeneralLazy = (SaveFileGeneralLazy)GetNode(saveFileGeneralLazyPath);
+        saveFileGeneral = (SaveFileGeneral)GetNode(saveFileGeneralPath);
 
         // test placeholder
         sideDataList = new List<SideData>(){ 
@@ -109,7 +109,7 @@ public class MapEditor : Control
         regionEdit.regionIdUpdated += OnRegionTextChanged;
         regionEdit.regionNameUpdated += OnRegionTextChanged;
 
-        saveFileGeneralLazy.pressed += OnSaveFileGeneralLazyPressed;
+        saveFileGeneral.pressed += OnSaveFileGeneralPressed;
 
         // load first premade map
         selectGeneral.Select(0);
@@ -125,12 +125,12 @@ public class MapEditor : Control
         */
     }
 
-    void OnSaveFileGeneralLazyPressed(object sender, EventArgs _)
+    void OnSaveFileGeneralPressed(object sender, EventArgs _)
     {
         var jsonString = JsonExporter.ToString(sideDataList, regionMap.Values);
         var name = "mapdata.json";
         var data = System.Text.Encoding.UTF8.GetBytes(jsonString);
-        saveFileGeneralLazy.StartSave(data, name);
+        saveFileGeneral.StartSave(data, name);
     }
 
     void OnRegionTextChanged(object sender, Region region)
